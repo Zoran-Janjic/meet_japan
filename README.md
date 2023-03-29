@@ -17,6 +17,15 @@ Start the server: npm run start:dev
 Dependencies:
 
 
+
+Dev Dependencies used:
+
+    "eslint": "^8.37.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "nodemon": "^2.0.22"
+
 Usage:
 Once the server is running, navigate to http://localhost:3000 in your web browser to access the Meet Japan web application. // Currently only backend is being developed
 
