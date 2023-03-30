@@ -9,5 +9,12 @@ module.exports = {
   parserOptions: {
     ecmaVersion: "latest",
   },
-  rules: { quotes: ["error", "double"], indent: ["error", 2] },
+  rules: {
+    quotes: ["error", "double"],
+    indent: ["error", 2],
+    "no-console": "off",
+    "comma-dangle": "off",
+    "import/order": "off",
+    "import/no-extraneous-dependencies": "off",
+  },
 };
