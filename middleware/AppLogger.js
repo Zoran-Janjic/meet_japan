@@ -1,5 +1,6 @@
 const moment = require("moment");
 
+// * console log requests to the api
 const requestLogger = (req, res, next) => {
   console.log("-------------------");
   console.log("METHOD: ", req.method);
