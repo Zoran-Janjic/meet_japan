@@ -1,6 +1,8 @@
-Meet Japan - README
+Meet Japan - README BACKEND
 
-This is the README file for the Meet Japan project, which is a web application built using Node.js, Express.js, and MongoDB with Mongoose.
+This is the README file for the Meet Japan project - backend , which is a web application built using Node.js, Express.js, and MongoDB with Mongoose.
+
+Backend is MVC architectural pattern which separates an application into three main logical components: the model, the view, and the controller. Each of these components are built to handle specific development aspects of an application.
 
 Installation:
 
