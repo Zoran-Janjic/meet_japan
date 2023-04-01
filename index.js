@@ -15,6 +15,7 @@ if (process.env.NODE_ENV !== "production") {
   app.use(Logger.requestLogger);
 }
 
+// ? Check how to serve images
 app.use(express.static(`${__dirname}/public`)); // ? Static files location
 
 //  * Routers mounting
