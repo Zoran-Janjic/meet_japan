@@ -18,15 +18,25 @@ Start the server: npm run start:dev
 
 Dependencies:
 
-
+"dependencies": {
+"cors": "^2.8.5",
+"dotenv": "^16.0.3",
+"express": "^4.18.2",
+"http-status-codes": "^2.2.0",
+"moment": "^2.29.4",
+"mongoose": "^7.0.3"
+},
 
 Dev Dependencies used:
 
-    "eslint": "^8.37.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.27.5",
-    "nodemon": "^2.0.22"
+"devDependencies": {
+"colors": "^1.4.0",
+"eslint": "^8.37.0",
+"eslint-config-airbnb": "^19.0.4",
+"eslint-config-airbnb-base": "^15.0.0",
+"eslint-plugin-import": "^2.27.5",
+"nodemon": "^2.0.22"
+}
 
 Usage:
 Once the server is running, navigate to http://localhost:3000 in your web browser to access the Meet Japan web application. // Currently only backend is being developed
@@ -46,5 +56,3 @@ License:
 This project is licensed under the Proprietary license. See the LICENSE file for more information.
 
 If you have any questions or concerns about the Meet Japan project, please contact us at meetjapan2023@gmail.com
-
-
