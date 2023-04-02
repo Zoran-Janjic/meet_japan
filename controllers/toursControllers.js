@@ -1,28 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
-
-// //! Remove later all below
-const fs = require("fs");
-
-// ! MOCK DATA IMPORTS REMOVED BEFORE PRODUCTION START
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/../mock/dev-data/data/tours-simple.json`)
-);
+const Tour = require("../models/Tour");
 
 // * Param middleware
-
-/*
- * Check if the tour id is valid before proceeding
- * to the handlers.
- */
-const checkID = (req, res, next) => {
-  if (Number(req.params.tourId) > tours.length) {
-    return res.status(StatusCodes.NOT_FOUND).json({
-      status: "fail",
-      message: `No tour with id ${req.params.tourId}`,
-    });
-  }
-  return next();
-};
 
 /*
  * Check if the new tour containes the required data to create a new tour
@@ -42,7 +21,7 @@ const checkRequestBody = (req, res, next) => {
 
 // * Route handlers
 const getTours = (req, res) => {
-  res.status(200).json({
+  const allTour = res.status(200).json({
     status: StatusCodes.OK,
     data: { tours },
   });
@@ -99,6 +78,5 @@ module.exports = {
   addTour,
   updateTour,
   deleteTour,
-  checkID,
   checkRequestBody,
 };
