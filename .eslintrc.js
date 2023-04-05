@@ -18,5 +18,6 @@ module.exports = {
     "import/no-extraneous-dependencies": "off",
     "import/newline-after-import": "off",
     "arrow-body-style": "off",
+    "consistent-return": "off",
   },
 };

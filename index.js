@@ -1,8 +1,19 @@
+/* Because of the library, we do not
+need the next(exception) call anymore.
+The library handles everything under the hood.
+If an exception occurs in an async route, the
+execution is automatically passed to the error\
+ handling middleware. */
+require("express-async-errors");
+
 const express = require("express");
 
 const app = express();
 const cors = require("cors");
+// * Middleware
 const Logger = require("./middleware/AppLogger");
+const ErrorHandler = require("./middleware/ErrorHandler");
+// * Routes
 const tourRouter = require("./routes/tours");
 const usersRouter = require("./routes/users");
 
@@ -27,4 +38,7 @@ const unknownEndpoint = (req, res) => {
   res.status(404).send({ error: "No such endpoint." });
 };
 app.use(unknownEndpoint);
+// this has to be the last loaded middleware.
+app.use(ErrorHandler);
+
 module.exports = app;

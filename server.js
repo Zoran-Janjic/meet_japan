@@ -21,9 +21,13 @@ connectDB(
   })
   .then(() => {
     app.listen(PORT, () => {
-      console.log(colors.bgGreen.white.bold(`App running on port ${PORT}...SERVER.JS`));
+      console.log(
+        colors.bgGreen.white.bold(`App running on port ${PORT}...SERVER.JS`)
+      );
     });
   })
   .catch((err) => {
-    console.log(colors.bgRed.white.bold(`Error connecting to database: ${err.message}`));
+    console.log(
+      colors.bgRed.white.bold(`Error connecting to database: ${err.message}`)
+    );
   });

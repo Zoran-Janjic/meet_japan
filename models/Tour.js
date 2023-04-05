@@ -4,6 +4,7 @@ const tourSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "Tour must have a name."],
+    unique: true,
   },
   price: {
     type: Number,
