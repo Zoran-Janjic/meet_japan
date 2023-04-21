@@ -33,7 +33,7 @@ const addTour = async (req, res) => {
   const newTour = await Tour.create(req.body);
 
   res.json({
-    status: StatusCodes.OK,
+    status: StatusCodes.CREATED,
     message: "Created",
     data: newTour,
   });
@@ -71,15 +71,33 @@ const updateTour = async (req, res) => {
   }
 };
 
-const deleteTour = (req, res) => {
+const deleteTour = async (req, res) => {
   const { tourId } = req.params;
+  try {
+    // Check if tour exists
+    const foundTour = await Tour.findByIdAndDelete(tourId);
 
-  res.status(200).json({
-    status: 200,
-    data: {
-      tour: { results: `tour deleted successfully with ${tourId}` },
-    },
-  });
+    // If tour does not exist send not found response
+    if (!foundTour) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        status: StatusCodes.NOT_FOUND,
+        message: `Tour with ${tourId} does not exist.`,
+      });
+    }
+    // if tour is found and deleted successfully send the deleted tour
+    res.json({
+      status: StatusCodes.OK,
+      message: `Tour deleted successfully with ${tourId}`,
+      deletedTour: foundTour,
+    });
+  } catch {
+    // If error oocurs delteting tour send response
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      message:
+        "Something went wrong trying to delete your tour. Please try again later.",
+    });
+  }
 };
 
 module.exports = {
