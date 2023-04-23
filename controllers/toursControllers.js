@@ -21,10 +21,69 @@ const Tour = require("../models/Tour");
 
 // * Route handlers
 const getTours = async (req, res) => {
-  const allTours = await Tour.find({});
+  // ? Get filters if specified
+  const queryObj = { ...req.query };
+
+  // ? Exclude from filter and delete it from the query object
+  const excludedFields = ["page", "sort", "limit", "fields"];
+  // ? Remove the excluded fields from the query object
+  excludedFields.forEach((field) => {
+    delete queryObj[field];
+  });
+
+  // * Step 1 Advanced filtering
+  // ? regular expression to search for any occurrence of the filtering operators
+  // ? gte, gt, lte, and lt using the \b(gte|gt|lte|lt)\b pattern.
+  const queryStep1 = JSON.stringify(queryObj).replace(
+    /\b(gte|gt|lte|lt)\b/g,
+    (match) => `$${match}`
+  );
+  // ? Create a query with advanced filters
+  let createdQuery = Tour.find(JSON.parse(queryStep1));
+
+  // * Step 2 Sorting the query if the sort is requested
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(",").join(" ");
+    createdQuery = createdQuery.sort(sortBy);
+  } else {
+    // ? If not sort provided we add the default one which will sort by the date added
+    // ? and will show the newest one first.
+    createdQuery = createdQuery.sort("-createdAt");
+  }
+
+  // * Step 3 Limit which fields we want to get back so we can reduce the bandwidth for the request
+  if (req.query.fields) {
+    const requiredFields = req.query.fields.split(",").join(" ");
+    createdQuery = createdQuery.select(requiredFields);
+  } else {
+    // ? If no fields are specified than use the default one which remove the following properties
+    createdQuery = createdQuery.select("-__v");
+  }
+
+  // * Step 4 Pagination Allowing the request to specify which page of the results they want
+  const page = req.query.page * 1 || 1;
+  const limit = req.query.limit * 1 || 100;
+  const skip = (page - 1) * limit;
+
+  createdQuery = createdQuery.skip(skip).limit(limit);
+
+  // ? Check if the page exists so we dont skip more than we have pages
+  if (req.query.page) {
+    const totalTours = await Tour.countDocuments();
+    if (skip > totalTours) {
+      return res.json({
+        status: StatusCodes.BAD_REQUEST,
+        message: `Invalid page number: ${page}`,
+      });
+    }
+  }
+  // * Step 5 Execute the final query and send result
+  const allTours = await createdQuery;
 
   res.json({
     status: StatusCodes.OK,
+    currentPage: page,
+    totalItems: allTours.length,
     data: allTours,
   });
 };
