@@ -1,88 +1,22 @@
 const { StatusCodes } = require("http-status-codes");
 const Tour = require("../models/Tour");
-
-// * Param middleware
-
-/*
- * Check if the new tour containes the required data to create a new tour
- */
-
-// const checkRequestBody = (req, res, next) => {
-//   if (!req.body.name || !req.body.price) {
-//     return res.status(StatusCodes.BAD_REQUEST).json({
-//       status: "Failed",
-//       message: "Missing required parameters",
-//     });
-//   }
-//   return next();
-// };
-
-// * End of param middleware
+const CustomController = require("../customClasses/CustomController");
 
 // * Route handlers
 const getTours = async (req, res) => {
-  // ? Get filters if specified
-  const queryObj = { ...req.query };
+  // *  Custom controller that does all the filtering options as we pass to it
+  // * The query object and the query string that we receive
+  const filteredQueryObject = new CustomController(Tour.find(), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
 
-  // ? Exclude from filter and delete it from the query object
-  const excludedFields = ["page", "sort", "limit", "fields"];
-  // ? Remove the excluded fields from the query object
-  excludedFields.forEach((field) => {
-    delete queryObj[field];
-  });
-
-  // * Step 1 Advanced filtering
-  // ? regular expression to search for any occurrence of the filtering operators
-  // ? gte, gt, lte, and lt using the \b(gte|gt|lte|lt)\b pattern.
-  const queryStep1 = JSON.stringify(queryObj).replace(
-    /\b(gte|gt|lte|lt)\b/g,
-    (match) => `$${match}`
-  );
-  // ? Create a query with advanced filters
-  let createdQuery = Tour.find(JSON.parse(queryStep1));
-
-  // * Step 2 Sorting the query if the sort is requested
-  if (req.query.sort) {
-    const sortBy = req.query.sort.split(",").join(" ");
-    createdQuery = createdQuery.sort(sortBy);
-  } else {
-    // ? If not sort provided we add the default one which will sort by the date added
-    // ? and will show the newest one first.
-    createdQuery = createdQuery.sort("-createdAt");
-  }
-
-  // * Step 3 Limit which fields we want to get back so we can reduce the bandwidth for the request
-  if (req.query.fields) {
-    const requiredFields = req.query.fields.split(",").join(" ");
-    createdQuery = createdQuery.select(requiredFields);
-  } else {
-    // ? If no fields are specified than use the default one which remove the following properties
-    createdQuery = createdQuery.select("-__v");
-  }
-
-  // * Step 4 Pagination Allowing the request to specify which page of the results they want
-  const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 100;
-  const skip = (page - 1) * limit;
-
-  createdQuery = createdQuery.skip(skip).limit(limit);
-
-  // ? Check if the page exists so we dont skip more than we have pages
-  if (req.query.page) {
-    const totalTours = await Tour.countDocuments();
-    if (skip > totalTours) {
-      return res.json({
-        status: StatusCodes.BAD_REQUEST,
-        message: `Invalid page number: ${page}`,
-      });
-    }
-  }
-  // * Step 5 Execute the final query and send result
-  const allTours = await createdQuery;
+  // *  Execute the final query and send result
+  const allTours = await filteredQueryObject.query;
 
   res.json({
     status: StatusCodes.OK,
-    currentPage: page,
     totalItems: allTours.length,
     data: allTours,
   });
@@ -159,10 +93,91 @@ const deleteTour = async (req, res) => {
   }
 };
 
+const getAllToursStats = async (req, res) => {
+  /*
+   the aggregation pipeline is a framework for data aggregation
+   that allows you to process data records and transform them
+  into aggregated results based on a series of pipeline stages.
+  */
+  try {
+    const allToursStats = await Tour.aggregate([
+      { $match: { ratingAverage: { $gte: 0 } } },
+      {
+        $group: {
+          /* If we add _id: difficutly, it will group them based on the difficulty
+          with all the different stats included. ID is what we use to decide which
+          field to aggregate upon and it goes through each document and adds up.
+          For instance, we can observe that the ratings for the easiest tours are
+          the lowest and the highest
+          and for the medium are the best ratings. So we can use it to get statistics for the tours
+          example :
+           _id: "$difficulty",
+           {
+            "_id": "difficult",
+            "totalTours": 2,
+            "totalRatings": 12,
+            "avgRating": 2.5,
+            "avgPrice": 1997,
+            "minPrice": 997,
+            "maxPrice": 2997
+        },
+        {
+            "_id": "easy",
+            "totalTours": 4,
+            "totalRatings": 3,
+            "avgRating": 1.75,
+            "avgPrice": 1272,
+            "minPrice": 397,
+            "maxPrice": 1997
+        },
+        {
+            "_id": "medium",
+            "totalTours": 3,
+            "totalRatings": 2,
+            "avgRating": 2,
+            "avgPrice": 1663.6666666666667,
+            "minPrice": 497,
+            "maxPrice": 2997
+        }
+          */
+          _id: null,
+          totalTours: { $sum: 1 },
+          totalRatings: { $sum: "$ratingQuantity" },
+          avgRating: { $avg: "$ratingAverage" },
+          avgPrice: { $avg: "$price" },
+          minPrice: { $min: "$price" },
+          maxPrice: { $max: "$price" },
+          longestTour: { $max: "$duration" },
+          shortestTour: { $min: "$duration" },
+          biggestTourGroup: { $max: "$maxGroupSize" },
+          smallestTourGroup: { $min: "$maxGroupSize" },
+        },
+      },
+      {
+        $sort: {
+          minPrice: 1,
+        },
+      },
+    ]);
+
+    res.json({
+      status: StatusCodes.OK,
+      data: allToursStats,
+    });
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      message:
+        "Something went wrong trying to get tours stats. Please try again later.",
+    });
+  }
+};
+
 module.exports = {
   getTours,
   getTour,
   addTour,
   updateTour,
   deleteTour,
+  getAllToursStats,
 };
