@@ -4,7 +4,8 @@ const AliasedToursRoutes = require("../middleware/AliasToursMiddleware/AliasedTo
 const tourRouter = express.Router();
 const tourController = require("../controllers/toursControllers");
 
-tourRouter.route("/").get(tourController.getTours).post(tourController.addTour);
+// ?  Aggregated routes stats
+tourRouter.route("/all-tours-stats").get(tourController.getAllToursStats);
 
 // ? Aliased tour routes
 tourRouter
@@ -18,7 +19,18 @@ tourRouter
   .route("/top-5-rated")
   .get(AliasedToursRoutes.topFiveRated, tourController.getTours);
 
+tourRouter
+  .route("/top-5-newest")
+  .get(AliasedToursRoutes.topFiveNewest, tourController.getTours);
+
+tourRouter
+  .route("/top-5-price")
+  .get(AliasedToursRoutes.topFiveHighestPrice, tourController.getTours);
+
 // ? Regular routes
+
+tourRouter.route("/").get(tourController.getTours).post(tourController.addTour);
+
 tourRouter
   .route("/:tourId")
   .get(tourController.getTour)
