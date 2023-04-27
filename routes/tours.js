@@ -27,6 +27,11 @@ tourRouter
   .route("/top-5-price")
   .get(AliasedToursRoutes.topFiveHighestPrice, tourController.getTours);
 
+// ? Aggregated routes
+tourRouter.route("/global-stats").get(tourController.getAllToursStats);
+
+tourRouter.route("/monthly-stats/:year").get(tourController.getMonthlyStats);
+
 // ? Regular routes
 
 tourRouter.route("/").get(tourController.getTours).post(tourController.addTour);
