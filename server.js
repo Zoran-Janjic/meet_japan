@@ -4,6 +4,12 @@ const connectDB = require("./db/connectDB");
 const app = require("./index");
 const PORT = process.env.PORT || 5000;
 const colors = require("colors/safe");
+// ? Catch error at startup
+process.on("uncaughtException", (err) => {
+  console.log(`Uncaught error occurred: ${(err.name, err.message)}`);
+  console.log("Shutting down server.");
+  process.exit(1);
+});
 
 /*
 Connect to db and than start the server if connection is established
