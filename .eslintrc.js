@@ -19,5 +19,7 @@ module.exports = {
     "import/newline-after-import": "off",
     "arrow-body-style": "off",
     "consistent-return": "off",
+    "no-underscore-dangle": "off",
+    "implicit-arrow-linebreak": "off",
   },
 };

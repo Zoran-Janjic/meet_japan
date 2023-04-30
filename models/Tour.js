@@ -96,7 +96,28 @@ const tourSchema = new mongoose.Schema(
       type: String,
     },
   },
-  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        const newObj = { ...ret };
+        newObj.id = ret._id;
+        delete newObj._id;
+        delete newObj.__v;
+        return newObj;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      versionKey: false,
+      transform: (doc, ret) => {
+        const newObje = { ...ret };
+        delete newObje._id;
+        return newObje;
+      },
+    },
+  }
 );
 
 // * Virtual properties

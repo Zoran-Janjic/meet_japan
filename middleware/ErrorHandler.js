@@ -36,12 +36,12 @@ const errorHandler = (error, request, response, next) => {
   }
 
   // ! Dev only
-  console.error(
-    colors.bgRed.white.bold(
-      "Error not handled by error handler: ",
-      error.message
-    )
-  );
+  // console.error(
+  //   colors.bgRed.white.bold(
+  //     "Error not handled by error handler: ",
+  //     error.message
+  //   )
+  // );
 
   // Send the error message
   response
