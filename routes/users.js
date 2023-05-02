@@ -4,12 +4,12 @@ const userRouter = express.Router();
 const usersController = require("../controllers/usersController");
 
 userRouter
-  .route("/api/v1/users")
+  .route("/")
   .get(usersController.getAllUsers)
   .post(usersController.createUser);
 
 userRouter
-  .route("/api/v1/users/:userId")
+  .route("/:userId")
   .get(usersController.getUser)
   .patch(usersController.updateUser)
   .delete(usersController.deleteUser);

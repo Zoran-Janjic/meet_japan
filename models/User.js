@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema(
   {
@@ -31,6 +32,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "User must provide a valid password."],
       minLength: 8,
+      select: false,
     },
     passwordConfirmation: {
       type: String,
@@ -54,7 +56,6 @@ const userSchema = new mongoose.Schema(
         newObj.id = ret._id;
         delete newObj._id;
         delete newObj.__v;
-        delete newObj.password;
         return newObj;
       },
     },
@@ -62,9 +63,9 @@ const userSchema = new mongoose.Schema(
       virtuals: true,
       versionKey: false,
       transform: (doc, ret) => {
-        const newObje = { ...ret };
-        delete newObje._id;
-        return newObje;
+        const newObj = { ...ret };
+        delete newObj._id;
+        return newObj;
       },
     },
   }
@@ -83,12 +84,25 @@ userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   // ?  If password has not been modified than we modify it
   this.password = await bcrypt.hash(this.password, 12);
-  console.log(this.password);
 
   // ? Not needed anymore as the password is already matched with he confirmation password
   this.passwordConfirmation = undefined;
   next();
 });
+
+//  * Instance methods available for all document of the User collection
+
+// ? Check the user password match on login
+userSchema.methods.checkPassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+userSchema.methods.createToken = function () {
+  return jwt.sign({ id: this.id }, process.env.JWT_SECRET_KEY, {
+    expiresIn: process.env.JWT_EXPIRES_ID,
+    issuer: "Meet Japan",
+  });
+};
 
 const User = mongoose.model("User", userSchema);
 
