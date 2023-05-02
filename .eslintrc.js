@@ -21,5 +21,6 @@ module.exports = {
     "consistent-return": "off",
     "no-underscore-dangle": "off",
     "implicit-arrow-linebreak": "off",
+    "no-return-await": "off",
   },
 };

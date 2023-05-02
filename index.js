@@ -28,7 +28,7 @@ if (process.env.NODE_ENV !== "production") {
   app.use(Logger.requestLogger);
 }
 
-// ? Check how to serve images9
+// ? Check how to serve images
 app.use(express.static(`${__dirname}/public`)); // ? Static files location
 
 //  * Routers mounting
@@ -38,7 +38,7 @@ app.use("/api/v1/auth", authRouter);
 
 // * Unknown endpoint
 app.all("*", unknownEndpointHandler);
-// this has to be the last loaded middleware.
+// * This has to be the last loaded middleware. So it can catch all errors
 app.use(ErrorHandler);
 
 module.exports = app;

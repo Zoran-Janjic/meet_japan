@@ -1,7 +1,10 @@
 const { StatusCodes } = require("http-status-codes");
+const User = require("../models/User");
 
-const getAllUsers = (req, res) => {
-  res.status(StatusCodes.OK).json({ message: "Route working" });
+const getAllUsers = async (req, res) => {
+  const allUsers = await User.find();
+
+  res.status(StatusCodes.OK).json({ message: "success", data: { allUsers } });
 };
 
 const createUser = (req, res) => {
