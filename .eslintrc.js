@@ -22,5 +22,6 @@ module.exports = {
     "no-underscore-dangle": "off",
     "implicit-arrow-linebreak": "off",
     "no-return-await": "off",
+    "operator-linebreak": "off",
   },
 };

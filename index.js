@@ -5,10 +5,8 @@ If an exception occurs in an async route, the
 execution is automatically passed to the express error\
  handling middleware. */
 require("express-async-errors");
-
 const express = require("express");
 const unknownEndpointHandler = require("./routes/notFound");
-
 const app = express();
 const cors = require("cors");
 // * Middleware

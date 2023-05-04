@@ -5,6 +5,7 @@ const {
   handleMongooseValidationError,
   handleDuplicateKeyError,
   handleMongooseCastError,
+  handleJwtError,
 } = require("../errors/handlers");
 
 const MONGOOSE_DUPLICATE_KEY_ERROR_CODE = 11000;
@@ -14,7 +15,7 @@ const JWT_ERROR = "JsonWebTokenError";
 const EXPIRED_JWT = "TokenExpiredError";
 
 const errorHandler = (error, request, response, next) => {
-  console.error(colors.bgRed.white.bold(error)); //! Dev only
+  // console.error(colors.bgRed.white.bold(error.name)); //! Dev only
 
   let customError = {
     statusCode: error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
@@ -34,7 +35,10 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === MONGOOSE_CAST_ERROR) {
     customError = handleMongooseCastError(customError, error);
   }
-
+  //  Jwt errors
+  if (error.name === JWT_ERROR) {
+    customError = handleJwtError(customError, error);
+  }
   // ! Dev only
   // console.error(
   //   colors.bgRed.white.bold(

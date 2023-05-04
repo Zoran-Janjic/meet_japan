@@ -1,8 +1,8 @@
 const express = require("express");
 const AliasedToursRoutes = require("../middleware/AliasToursMiddleware/AliasedToursRoutes");
-
 const tourRouter = express.Router();
 const tourController = require("../controllers/toursControllers");
+const ProtectedRoutes = require("../middleware/ProtectedRoutesMiddleware/RouteProtect");
 
 // ?  Aggregated routes stats
 tourRouter.route("/all-tours-stats").get(tourController.getAllToursStats);
@@ -34,7 +34,10 @@ tourRouter.route("/monthly-stats/:year").get(tourController.getMonthlyStats);
 
 // ? Regular routes
 
-tourRouter.route("/").get(tourController.getTours).post(tourController.addTour);
+tourRouter
+  .route("/")
+  .get(ProtectedRoutes.protectedRoute, tourController.getTours)
+  .post(tourController.addTour);
 
 tourRouter
   .route("/:tourId")

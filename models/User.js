@@ -46,6 +46,7 @@ const userSchema = new mongoose.Schema(
         message: "Passwords don't match.",
       },
     },
+    lastPasswordChangedDate: { type: Date },
   },
   {
     timestamps: true,
@@ -97,11 +98,25 @@ userSchema.methods.checkPassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
+// ? Issue a token for the user
 userSchema.methods.createToken = function () {
   return jwt.sign({ id: this.id }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRES_ID,
     issuer: "Meet Japan",
   });
+};
+
+// ? Check if user has changed password after jwt was issued
+userSchema.methods.wasPasswordChangedAfterJWTIssued = function (jwtIssuedTime) {
+  if (this.lastPasswordChangedDate) {
+    const changedPasswordDate = parseInt(
+      this.lastPasswordChangedDate.getTime() / 1000,
+      10
+    );
+
+    // ? False means that the password was not changed during the last issued token expiration date
+    return jwtIssuedTime < changedPasswordDate;
+  }
 };
 
 const User = mongoose.model("User", userSchema);
