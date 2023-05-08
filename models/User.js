@@ -34,6 +34,11 @@ const userSchema = new mongoose.Schema(
       minLength: 8,
       select: false,
     },
+    role: {
+      type: String,
+      enum: ["admin", "user", "tourguide"],
+      default: "user",
+    },
     passwordConfirmation: {
       type: String,
       required: [true, "User must provide a valid password."],
@@ -46,6 +51,7 @@ const userSchema = new mongoose.Schema(
         message: "Passwords don't match.",
       },
     },
+
     lastPasswordChangedDate: { type: Date },
   },
   {

@@ -1,9 +1,10 @@
 const User = require("../../models/User");
-const { CustomAPIError, JsonWebTokenError } = require("../../errors");
+const { JsonWebTokenError } = require("../../errors");
 const jwt = require("jsonwebtoken");
 
 const protectedRoute = async (req, res, next) => {
-  let tokenFromRequest, decodedToken;
+  let tokenFromRequest;
+  let decodedToken;
   // * Step1: Check if token is present with the request
   if (
     req.headers.authorization &&
@@ -33,6 +34,7 @@ const protectedRoute = async (req, res, next) => {
     return next(new JsonWebTokenError("Password changed"));
   }
   // * Grant access to the protected route as the user is successfully authenticated
+  req.user = currentUser;
   next();
 };
 

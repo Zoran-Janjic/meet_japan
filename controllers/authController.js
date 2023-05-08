@@ -6,13 +6,7 @@ const { BadRequestError, CustomAPIError } = require("../errors");
 // ? Add special route for adding admin privilege
 
 const registerUser = async (req, res) => {
-  const newUser = await User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    passwordConfirmation: req.body.passwordConfirmation,
-    lastPasswordChangedDate: req.body.lastPasswordChangedDate,
-  });
+  const newUser = await User.create(req.body);
 
   const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRES_ID,

@@ -1,8 +1,7 @@
 const express = require("express");
-const AliasedToursRoutes = require("../middleware/AliasToursMiddleware/AliasedToursRoutes");
+const applicationMiddleware = require("../middleware/index");
 const tourRouter = express.Router();
 const tourController = require("../controllers/toursControllers");
-const ProtectedRoutes = require("../middleware/ProtectedRoutesMiddleware/RouteProtect");
 
 // ?  Aggregated routes stats
 tourRouter.route("/all-tours-stats").get(tourController.getAllToursStats);
@@ -11,21 +10,30 @@ tourRouter.route("/all-tours-stats").get(tourController.getAllToursStats);
 tourRouter
   .route("/lowest-5-price")
   .get(
-    AliasedToursRoutes.topFiveLowestPriceBestReviewTours,
+    applicationMiddleware.AliasedRoutes.topFiveHighestPrice,
     tourController.getTours
   );
 
 tourRouter
   .route("/top-5-rated")
-  .get(AliasedToursRoutes.topFiveRated, tourController.getTours);
+  .get(
+    applicationMiddleware.AliasedRoutes.topFiveHighestPrice,
+    tourController.getTours
+  );
 
 tourRouter
   .route("/top-5-newest")
-  .get(AliasedToursRoutes.topFiveNewest, tourController.getTours);
+  .get(
+    applicationMiddleware.AliasedRoutes.topFiveNewest,
+    tourController.getTours
+  );
 
 tourRouter
   .route("/top-5-price")
-  .get(AliasedToursRoutes.topFiveHighestPrice, tourController.getTours);
+  .get(
+    applicationMiddleware.AliasedRoutes.topFiveHighestPrice,
+    tourController.getTours
+  );
 
 // ? Aggregated routes
 tourRouter.route("/global-stats").get(tourController.getAllToursStats);
@@ -36,13 +44,31 @@ tourRouter.route("/monthly-stats/:year").get(tourController.getMonthlyStats);
 
 tourRouter
   .route("/")
-  .get(ProtectedRoutes.protectedRoute, tourController.getTours)
-  .post(tourController.addTour);
+  .get(
+    applicationMiddleware.RouteProtect.protectedRoute,
+    tourController.getTours
+  )
+  .post(
+    applicationMiddleware.RouteProtect.protectedRoute,
+    applicationMiddleware.RoleRestrictedRoute.restrictTo("admin", "tourguide"),
+    tourController.addTour
+  );
 
 tourRouter
   .route("/:tourId")
-  .get(tourController.getTour)
-  .patch(tourController.updateTour)
-  .delete(tourController.deleteTour);
+  .get(
+    applicationMiddleware.RouteProtect.protectedRoute,
+    tourController.getTour
+  )
+  .patch(
+    applicationMiddleware.RouteProtect.protectedRoute,
+    applicationMiddleware.RoleRestrictedRoute.restrictTo("admin", "tourguide"),
+    tourController.updateTour
+  )
+  .delete(
+    applicationMiddleware.RouteProtect.protectedRoute,
+    applicationMiddleware.RoleRestrictedRoute.restrictTo("admin", "tourguide"),
+    tourController.deleteTour
+  );
 
 module.exports = tourRouter;
