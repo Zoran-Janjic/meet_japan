@@ -3,6 +3,7 @@ dotenv.config({ path: "./config.env" });
 const connectDB = require("./db/connectDB");
 const app = require("./index");
 const PORT = process.env.PORT || 5000;
+
 const colors = require("colors/safe");
 // ? Catch error at startup
 process.on("uncaughtException", (err) => {

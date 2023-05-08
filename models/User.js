@@ -2,6 +2,33 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+
+//* Util functions
+
+function generateRandomToken() {
+  /*
+The generateRandomToken function in your example generates a random token using crypto.
+randomBytes, and then applies a SHA-256 hash to the token using the createHash, update
+, and digest methods of the crypto module.
+Here's a breakdown of what each step does:
+crypto.randomBytes(32) generates a buffer of 32 random bytes.
+.toString("hex") converts the buffer to a hexadecimal string.
+createHash("sha256") creates a new SHA-256 hash object.
+.update(resetToken) updates the hash object with the random token.
+.digest("hex") produces the final hash value as a hexadecimal string.
+So, the output of this function is not the original random token, but rather its SHA-256 hash value.
+This can be useful for generating secure tokens that are resistant to tampering or guessing.
+However, note that the resulting token will be longer (64 characters, in this case)
+than the original random token (32 characters), due to the additional length added
+by the SHA-256 hash. If you need a token of a specific length, you may want
+to modify the function accordingly.
+  */
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  return crypto.createHash("sha256").update(resetToken).digest("hex");
+}
+// * End of util functions
 
 const userSchema = new mongoose.Schema(
   {
@@ -51,6 +78,8 @@ const userSchema = new mongoose.Schema(
         message: "Passwords don't match.",
       },
     },
+    passwordResetToken: { type: String },
+    passwordResetTokenExpiration: { type: Date },
 
     lastPasswordChangedDate: { type: Date },
   },
@@ -124,6 +153,20 @@ userSchema.methods.wasPasswordChangedAfterJWTIssued = function (jwtIssuedTime) {
     return jwtIssuedTime < changedPasswordDate;
   }
 };
+
+// ? Create a reset token in case user forgot password
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = generateRandomToken();
+
+  this.passwordResetToken = resetToken;
+  //  Reset token valid for 10 minutes
+  this.passwordResetTokenExpiration = Date.now() + 10 * 60 * 1000;
+
+  //  Return the reset token to be send with the reset email
+  return resetToken;
+};
+
+// *  End of instance methods
 
 const User = mongoose.model("User", userSchema);
 

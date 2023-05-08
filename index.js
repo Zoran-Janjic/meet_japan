@@ -38,5 +38,4 @@ app.use("/api/v1/auth", authRouter);
 app.all("*", unknownEndpointHandler);
 // * This has to be the last loaded middleware. So it can catch all errors
 app.use(ErrorHandler);
-
 module.exports = app;
