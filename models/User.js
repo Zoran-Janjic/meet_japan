@@ -26,7 +26,12 @@ to modify the function accordingly.
   */
   const resetToken = crypto.randomBytes(32).toString("hex");
 
-  return crypto.createHash("sha256").update(resetToken).digest("hex");
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  return { resetToken, hashedToken };
 }
 // * End of util functions
 
@@ -126,6 +131,15 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// ? Update the password changed at when the user changes their password
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
+
+  this.lastPasswordChangedDate = Date.now() - 1000;
+  console.log(this);
+  next();
+});
+
 //  * Instance methods available for all document of the User collection
 
 // ? Check the user password match on login
@@ -156,9 +170,9 @@ userSchema.methods.wasPasswordChangedAfterJWTIssued = function (jwtIssuedTime) {
 
 // ? Create a reset token in case user forgot password
 userSchema.methods.createPasswordResetToken = function () {
-  const resetToken = generateRandomToken();
+  const { resetToken, hashedToken } = generateRandomToken();
 
-  this.passwordResetToken = resetToken;
+  this.passwordResetToken = hashedToken;
   //  Reset token valid for 10 minutes
   this.passwordResetTokenExpiration = Date.now() + 10 * 60 * 1000;
 
