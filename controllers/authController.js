@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const { BadRequestError, CustomAPIError } = require("../errors");
 const sendEmail = require("../helpers/sendEmail");
 const crypto = require("crypto");
+const CreateResponseWithJWT = require("../helpers/createResponseWithJWT");
 
 // ? Add special route for adding admin privilege
 
@@ -15,10 +16,14 @@ const registerUser = async (req, res) => {
     expiresIn: process.env.JWT_EXPIRES_ID,
     issuer: "Meet Japan",
   });
-
-  res
-    .status(StatusCodes.CREATED)
-    .json({ status: "success", data: { user: newUser, token } });
+  CreateResponseWithJWT(
+    res,
+    StatusCodes.CREATED,
+    "success",
+    token,
+    "Account created successfully",
+    newUser
+  );
 };
 
 // ? Login existing user
@@ -39,12 +44,17 @@ const loginUser = async (req, res, next) => {
     return next(new CustomAPIError("Invalid email or password.", 401));
   }
   // If email and password are correct, create a JWT token for the user
-  const token = user.createToken();
   // Return success response with the JWT token
-  res.status(StatusCodes.CREATED).json({ status: "success", token });
+  CreateResponseWithJWT(
+    res,
+    StatusCodes.CREATED,
+    "success",
+    user.createToken(),
+    `Reset token sent to ${user.email}`
+  );
 };
 
-// ? Reset and Forgot existing user password
+// ? Forgot existing user password
 const forgotPassword = async (req, res, next) => {
   // Check if user exists
   const user = await User.findOne({ email: req.body.email });
@@ -80,10 +90,13 @@ const forgotPassword = async (req, res, next) => {
       emailText: userEmailMessage,
     });
 
-    res.status(StatusCodes.OK).json({
-      status: "Success",
-      message: `Reset token sent to ${user.email}`,
-    });
+    CreateResponseWithJWT(
+      res,
+      StatusCodes.OK,
+      "success",
+      user.createToken(),
+      `Reset token sent to ${user.email}`
+    );
   } catch (error) {
     user.passwordResetToken = undefined;
     user.passwordResetTokenExpiration = undefined;
@@ -100,6 +113,7 @@ const forgotPassword = async (req, res, next) => {
   }
 };
 
+// ? Reset the forgotten password
 const resetPassword = async (req, res, next) => {
   // * Get the token and hash it so we can find a user based on it
 
@@ -133,9 +147,47 @@ const resetPassword = async (req, res, next) => {
   await user.save();
   // * Log the user in and send the new JWT
 
-  const token = user.createToken();
+  CreateResponseWithJWT(
+    res,
+    StatusCodes.OK,
+    "success",
+    user.createToken(),
+    "Password updated successfully."
+  );
+};
 
-  res.status(StatusCodes.CREATED).json({ status: "success", token });
+// ? Update user password
+const updatePassword = async (req, res, next) => {
+  const { currentPassword, updatedPassword, passwordConfirmation } = req.body;
+  if (!currentPassword || !updatedPassword || !passwordConfirmation) {
+    return next(
+      new BadRequestError(
+        "Please provide the current password and the new password."
+      )
+    );
+  }
+  // * Get user from the database
+  const user = await User.findById(req.user.id).select("+password");
+  // * Check if the user knows the current password first
+  // Check if user with the provided email exists and if the password is correct
+  if (!user || !(await user.checkPassword(currentPassword))) {
+    // If the email or password is incorrect, return an unauthenticated error
+    return next(new CustomAPIError("Invalid password.", 401));
+  }
+  // * If password is correct than update the password and send the new JWT
+  // Update the password and passwordConfirmation for the user
+  user.password = updatedPassword;
+  user.passwordConfirmation = passwordConfirmation;
+  // Save the updated user to the database
+  await user.save();
+  // Return success response with the JWT token
+  CreateResponseWithJWT(
+    res,
+    StatusCodes.OK,
+    "success",
+    user.createToken(),
+    "Password updated successfully."
+  );
 };
 
 module.exports = {
@@ -143,4 +195,5 @@ module.exports = {
   loginUser,
   forgotPassword,
   resetPassword,
+  updatePassword,
 };

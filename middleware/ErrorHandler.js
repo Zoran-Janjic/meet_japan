@@ -15,7 +15,7 @@ const JWT_ERROR = "JsonWebTokenError";
 const EXPIRED_JWT = "TokenExpiredError";
 
 const errorHandler = (error, request, response, next) => {
-  // console.error(colors.bgRed.white.bold(error.name)); //! Dev only
+  console.error(colors.bgRed.white.bold(error.name)); //! Dev only
 
   let customError = {
     statusCode: error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,

@@ -73,7 +73,7 @@ const userSchema = new mongoose.Schema(
     },
     passwordConfirmation: {
       type: String,
-      required: [true, "User must provide a valid password."],
+      required: [true, "User must provide a valid confirmation password."],
       minLength: 8,
       // ? Validator only works on CREATE and SAVE
       validate: {
