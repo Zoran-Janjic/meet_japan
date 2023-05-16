@@ -8,7 +8,14 @@ userRouter
   .route("/")
   .get(
     applicationMiddleware.RouteProtect.protectedRoute,
-    usersController.getAllUsers
+    usersController.getUser
+  );
+
+userRouter
+  .route("/")
+  .patch(
+    applicationMiddleware.RouteProtect.protectedRoute,
+    usersController.updateUser
   );
 
 userRouter
@@ -16,10 +23,6 @@ userRouter
   .get(
     applicationMiddleware.RouteProtect.protectedRoute,
     usersController.getUser
-  )
-  .patch(
-    applicationMiddleware.RouteProtect.protectedRoute,
-    usersController.updateUser
   )
   .delete(
     applicationMiddleware.RouteProtect.protectedRoute,

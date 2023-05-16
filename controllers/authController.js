@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const { BadRequestError, CustomAPIError } = require("../errors");
 const sendEmail = require("../helpers/sendEmail");
 const crypto = require("crypto");
-const CreateResponseWithJWT = require("../helpers/createResponseWithJWT");
+const createResponseWithJWT = require("../helpers/createResponseWithJWT");
 
 // ? Add special route for adding admin privilege
 
@@ -43,14 +43,15 @@ const loginUser = async (req, res, next) => {
     // If the email or password is incorrect, return an unauthenticated error
     return next(new CustomAPIError("Invalid email or password.", 401));
   }
+  console.log(user);
   // If email and password are correct, create a JWT token for the user
   // Return success response with the JWT token
-  CreateResponseWithJWT(
+  createResponseWithJWT(
     res,
     StatusCodes.CREATED,
     "success",
     user.createToken(),
-    `Reset token sent to ${user.email}`
+    `Welcome back ${user.name}`
   );
 };
 
@@ -90,7 +91,7 @@ const forgotPassword = async (req, res, next) => {
       emailText: userEmailMessage,
     });
 
-    CreateResponseWithJWT(
+    createResponseWithJWT(
       res,
       StatusCodes.OK,
       "success",
@@ -147,7 +148,7 @@ const resetPassword = async (req, res, next) => {
   await user.save();
   // * Log the user in and send the new JWT
 
-  CreateResponseWithJWT(
+  createResponseWithJWT(
     res,
     StatusCodes.OK,
     "success",
@@ -181,7 +182,7 @@ const updatePassword = async (req, res, next) => {
   // Save the updated user to the database
   await user.save();
   // Return success response with the JWT token
-  CreateResponseWithJWT(
+  createResponseWithJWT(
     res,
     StatusCodes.OK,
     "success",

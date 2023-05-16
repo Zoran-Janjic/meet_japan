@@ -1,9 +1,9 @@
 const { StatusCodes } = require("http-status-codes");
 const User = require("../models/User");
+const helpers = require("../helpers/index");
 
 const getAllUsers = async (req, res) => {
   const allUsers = await User.find();
-
   res.status(StatusCodes.OK).json({ message: "success", data: { allUsers } });
 };
 
@@ -13,8 +13,48 @@ const getUser = (req, res) => {
   res.status(200).json({ message: "Route working" });
 };
 
-const updateUser = (req, res) => {
-  res.status(200).json({ message: "Route working" });
+// ? Update user details
+const updateUser = async (req, res) => {
+  const fieldsToRemove = [
+    "passwordResetToken",
+    "passwordResetTokenExpiration",
+    "lastPasswordChangedDate",
+    "password",
+    "role",
+    "passwordConfirmation",
+  ];
+
+  if (Object.keys(req.body).length > 0) {
+    const filteredUserUpdateObject = helpers.filterUpdateUserObject(
+      req.body,
+      fieldsToRemove
+    );
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      filteredUserUpdateObject,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    helpers.createHttpResponse(
+      res,
+      StatusCodes.OK,
+      "success",
+      `User details updated successfully for user ${updatedUser.name}`,
+      updatedUser
+    );
+  } else {
+    helpers.createHttpResponse(
+      res,
+      StatusCodes.OK,
+      "success",
+      `No data provided to update the user ${req.user.name} details. Please try again.`,
+      updateUser
+    );
+  }
 };
 
 const deleteUser = async (req, res) => {
