@@ -12,6 +12,13 @@ userRouter
   );
 
 userRouter
+  .route("/all")
+  .get(
+    applicationMiddleware.RouteProtect.protectedRoute,
+    usersController.getUsers
+  );
+
+userRouter
   .route("/")
   .patch(
     applicationMiddleware.RouteProtect.protectedRoute,
@@ -19,14 +26,17 @@ userRouter
   );
 
 userRouter
+  .route("/")
+  .delete(
+    applicationMiddleware.RouteProtect.protectedRoute,
+    usersController.deleteSelfUser
+  );
+
+userRouter
   .route("/:userId")
   .get(
     applicationMiddleware.RouteProtect.protectedRoute,
     usersController.getUser
-  )
-  .delete(
-    applicationMiddleware.RouteProtect.protectedRoute,
-    usersController.deleteUser
   );
 
 module.exports = userRouter;

@@ -87,6 +87,11 @@ const userSchema = new mongoose.Schema(
     passwordResetTokenExpiration: { type: Date },
 
     lastPasswordChangedDate: { type: Date },
+    active: {
+      type: Boolean,
+      default: true,
+      select: false,
+    },
   },
   {
     timestamps: true,
@@ -181,6 +186,15 @@ userSchema.methods.createPasswordResetToken = function () {
 };
 
 // *  End of instance methods
+
+// * Query middleware
+// ? All query that start with find return only the active users
+userSchema.pre("/^find/", function (next) {
+  this.find({ active: { $ne: false } });
+  next();
+});
+
+// * End of query middleware
 
 const User = mongoose.model("User", userSchema);
 
