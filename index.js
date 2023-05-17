@@ -16,18 +16,34 @@ const ErrorHandler = require("./middleware/ErrorHandler");
 const tourRouter = require("./routes/tours");
 const usersRouter = require("./routes/users");
 const authRouter = require("./routes/auth");
+// * Security
+const security = require("./helpers/Security");
 
 //  * Middleware
-app.use(express.json());
+
+// ? Body parser, reading data from request body to req.body and limit payload to 10kb
+app.use(express.json({ limit: "20kb" }));
+// ? Enable CORS middleware
 app.use(cors());
 
-// ? Any middleware needed for development only
+// ! Production environment
+if (process.env.NODE_ENV === "production") {
+  app.use("/api/v1", security.rateLimiterConfig);
+  app.use(security.configuredHelmet());
+}
+// ! Any middleware needed for development only
 if (process.env.NODE_ENV !== "production") {
   app.use(Logger.requestLogger);
+  app.use(security.configuredHelmet());
+  app.use(security.userDataSanitizer());
+  app.use(security.xssSanitizer());
+  app.use(security.preventParameterPollution());
 }
 
 // ? Check how to serve images
 app.use(express.static(`${__dirname}/public`)); // ? Static files location
+
+// * End of middleware
 
 //  * Routers mounting
 app.use("/api/v1/tours", tourRouter);

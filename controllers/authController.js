@@ -1,26 +1,21 @@
 const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
-const jwt = require("jsonwebtoken");
 const { BadRequestError, CustomAPIError } = require("../errors");
 const sendEmail = require("../helpers/sendEmail");
 const crypto = require("crypto");
 const createResponseWithJWT = require("../helpers/createResponseWithJWT");
-
+const createHttpResponse = require("../helpers/createHttpResponse");
 // ? Add special route for adding admin privilege
 
 // ? Register new user
 const registerUser = async (req, res) => {
   const newUser = await User.create(req.body);
-
-  const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET_KEY, {
-    expiresIn: process.env.JWT_EXPIRES_ID,
-    issuer: "Meet Japan",
-  });
-  CreateResponseWithJWT(
+  newUser.password = undefined;
+  createResponseWithJWT(
     res,
     StatusCodes.CREATED,
     "success",
-    token,
+    newUser.createToken(),
     "Account created successfully",
     newUser
   );
@@ -43,7 +38,7 @@ const loginUser = async (req, res, next) => {
     // If the email or password is incorrect, return an unauthenticated error
     return next(new CustomAPIError("Invalid email or password.", 401));
   }
-  console.log(user);
+
   // If email and password are correct, create a JWT token for the user
   // Return success response with the JWT token
   createResponseWithJWT(
@@ -91,11 +86,10 @@ const forgotPassword = async (req, res, next) => {
       emailText: userEmailMessage,
     });
 
-    createResponseWithJWT(
+    createHttpResponse(
       res,
       StatusCodes.OK,
       "success",
-      user.createToken(),
       `Reset token sent to ${user.email}`
     );
   } catch (error) {

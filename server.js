@@ -25,6 +25,9 @@ connectDB(
         "DB connection successful! Starting app server..."
       )
     );
+    console.log(
+      colors.bgWhite.white.bold(`Current NODE_ENV ${process.env.NODE_ENV}`)
+    );
   })
   .then(() => {
     app.listen(PORT, () => {
