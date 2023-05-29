@@ -16,7 +16,7 @@ connectDB(
 
 // ? Read the mock data file
 const allTours = JSON.parse(
-  fs.readFileSync(`${__dirname}/tours-simple.json`, "utf-8")
+  fs.readFileSync(`${__dirname}/tours.json`, "utf-8")
 );
 
 // ? Import data to the database

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
-const validator = require("validator");
+// const validator = require("validator");
 
 const tourSchema = new mongoose.Schema(
   {
@@ -14,7 +14,10 @@ const tourSchema = new mongoose.Schema(
         "Tour name must have less than or equal then 50 characters.",
       ],
       minLength: [10, "Tour name must be at least 10 characters."],
-      validate: [validator.isAlpha, "Tour name can only contain characters."],
+      validate: {
+        validator: /^[a-zA-Z\s]+$/,
+        message: "Tour name can only contain characters and spaces.",
+      },
     },
     description: {
       type: String,
@@ -95,6 +98,27 @@ const tourSchema = new mongoose.Schema(
     slug: {
       type: String,
     },
+    startLocation: {
+      // ? Geo Json
+      type: {
+        type: String,
+        default: "Point",
+        enum: ["Point"],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: { type: String, default: "Point", enum: ["Point"] },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
+    guides: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
   {
     timestamps: true,
