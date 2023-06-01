@@ -125,6 +125,7 @@ various tasks, such as validation, data transformation, or triggering other
 actions based on changes to a document.
 */
 
+// ? Hash password on new user registration
 userSchema.pre("save", async function (next) {
   // ? If password has been modified.
   if (!this.isModified("password")) return next();

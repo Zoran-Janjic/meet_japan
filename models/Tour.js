@@ -118,7 +118,7 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
-    guides: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    guides: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
   },
   {
     timestamps: true,
@@ -178,11 +178,14 @@ add custom logic to be executed before or after certain query methods
 are executed on a MongoDB collection. This
 */
 
-tourSchema.pre("^find", function (next) {
-  /*
-  Dont return the tour if it is private for all the find methods
-  */
-  this.find({ privateTour: { $ne: true } });
+/*
+  Don't return the tour if it is private for all the find methods
+  Populate the guides field for the tours
+*/
+tourSchema.pre(/^find/, function (next) {
+  console.log("object");
+  this.populate({ path: "guides" });
+  // this.find({ privateTour: { $ne: true } });
   next();
 });
 
