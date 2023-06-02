@@ -185,7 +185,7 @@ are executed on a MongoDB collection. This
 tourSchema.pre(/^find/, function (next) {
   console.log("object");
   this.populate({ path: "guides" });
-  // this.find({ privateTour: { $ne: true } });
+  this.find({ privateTour: { $ne: true } });
   next();
 });
 
