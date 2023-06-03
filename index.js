@@ -16,6 +16,7 @@ const ErrorHandler = require("./middleware/ErrorHandler");
 const tourRouter = require("./routes/tours");
 const usersRouter = require("./routes/users");
 const authRouter = require("./routes/auth");
+const reviewRouter = require("./routes/reviews");
 // * Security
 const security = require("./helpers/Security");
 
@@ -49,6 +50,7 @@ app.use(express.static(`${__dirname}/public`)); // ? Static files location
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/reviews", reviewRouter);
 
 // * Unknown endpoint
 app.all("*", unknownEndpointHandler);

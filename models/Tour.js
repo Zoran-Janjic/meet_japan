@@ -183,7 +183,6 @@ are executed on a MongoDB collection. This
   Populate the guides field for the tours
 */
 tourSchema.pre(/^find/, function (next) {
-  console.log("object");
   this.populate({ path: "guides" });
   this.find({ privateTour: { $ne: true } });
   next();

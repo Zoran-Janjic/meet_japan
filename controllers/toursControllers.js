@@ -34,7 +34,7 @@ const addTour = async (req, res) => {
 
 const getTour = async (req, res) => {
   const foundTour = await Tour.findById(req.params.tourId);
-  console.log(foundTour);
+
   if (foundTour != null) {
     res.json({
       status: StatusCodes.OK,
