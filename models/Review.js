@@ -48,12 +48,9 @@ add custom logic to be executed before or after certain query methods
 are executed on a MongoDB collection. This
 */
 
-/*
-  Don't return the tour if it is private for all the find methods
-  Populate the guides field for the tours
-*/
+// ? Return all reviews with their tours and users
 reviewSchema.pre(/^find/, function (next) {
-  this.populate({ path: "tour", select: "name" }).populate({
+  this.populate({
     path: "user",
     select: "name photo",
   });

@@ -33,7 +33,9 @@ const addTour = async (req, res) => {
 };
 
 const getTour = async (req, res) => {
-  const foundTour = await Tour.findById(req.params.tourId);
+  const foundTour = await Tour.findById(req.params.tourId).populate(
+    "tourReviews"
+  );
 
   if (foundTour != null) {
     res.json({

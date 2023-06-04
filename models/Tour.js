@@ -158,6 +158,12 @@ tourSchema.virtual("tourDurationInWeeks").get(function () {
   return this.duration / 7;
 });
 
+// ? Virtual populate
+tourSchema.virtual("tourReviews", {
+  ref: "Review",
+  foreignField: "tour", // ? Tour field in the review model
+  localField: "_id",
+});
 // * Document middleware
 /*
 allows you to add custom logic to be executed before or after certain

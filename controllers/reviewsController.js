@@ -2,7 +2,10 @@ const { StatusCodes } = require("http-status-codes");
 const Review = require("../models/Review");
 
 const getAllReviews = async (req, res) => {
-  const reviews = await Review.find();
+  const reviews = await Review.find().populate({
+    path: "tour",
+    select: "name",
+  });
 
   res
     .status(StatusCodes.OK)
