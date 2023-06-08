@@ -1,5 +1,6 @@
 const express = require("express");
-const reviewRouter = express.Router();
+// ? Allow access to the params from other routes
+const reviewRouter = express.Router({ mergeParams: true });
 const reviewsController = require("../controllers/reviewsController");
 const applicationMiddleware = require("../middleware/index");
 

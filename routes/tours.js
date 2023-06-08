@@ -2,6 +2,7 @@ const express = require("express");
 const applicationMiddleware = require("../middleware/index");
 const tourRouter = express.Router();
 const tourController = require("../controllers/toursControllers");
+const reviewRouter = require("./reviews");
 
 // ?  Aggregated routes stats
 tourRouter.route("/all-tours-stats").get(tourController.getAllToursStats);
@@ -70,5 +71,9 @@ tourRouter
     applicationMiddleware.RoleRestrictedRoute.restrictTo("admin", "tourguide"),
     tourController.deleteTour
   );
+
+// * Nested routes
+// ? Use the review router for the specific route
+tourRouter.use("/:tourId/reviews", reviewRouter);
 
 module.exports = tourRouter;

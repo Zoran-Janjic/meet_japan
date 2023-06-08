@@ -6,6 +6,13 @@ const getAllReviews = async (req, res) => {
     path: "tour",
     select: "name",
   });
+  // .lean();
+  //  ? check later
+  // reviews.forEach((reviewIn) => {
+  //   if (reviewIn.tour) {
+  //     delete reviewIn.tour.tourDurationInWeeks;
+  //   }
+  // });
 
   res
     .status(StatusCodes.OK)
@@ -13,6 +20,9 @@ const getAllReviews = async (req, res) => {
 };
 
 const createReview = async (req, res) => {
+  if (!req.body.tour) req.body.tour = req.params.tourId;
+  if (!req.body.user) req.body.user = req.user.id;
+
   const newReview = await Review.create(req.body);
   res.status(StatusCodes.OK).json({ status: "success", newReview });
 };

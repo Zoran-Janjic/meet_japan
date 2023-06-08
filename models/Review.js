@@ -45,7 +45,7 @@ const reviewSchema = new mongoose.Schema(
 // * Query middleware
 /*
 add custom logic to be executed before or after certain query methods
-are executed on a MongoDB collection. This
+are executed on a MongoDB collection.
 */
 
 // ? Return all reviews with their tours and users
