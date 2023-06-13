@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const Tour = require("../models/Tour");
 const CustomController = require("../customClasses/CustomController");
+const ControllerHandlerFactory = require("../helpers/FactoryHandlerFunctions/ControllerHandlerFactory");
 
 // * Route handlers
 const getTours = async (req, res) => {
@@ -66,34 +67,7 @@ const updateTour = async (req, res) => {
   }
 };
 
-const deleteTour = async (req, res) => {
-  const { tourId } = req.params;
-  try {
-    // Check if tour exists
-    const foundTour = await Tour.findByIdAndDelete(tourId);
-
-    // If tour does not exist send not found response
-    if (!foundTour) {
-      return res.status(StatusCodes.NOT_FOUND).json({
-        status: StatusCodes.NOT_FOUND,
-        message: `Tour with ${tourId} does not exist.`,
-      });
-    }
-    // if tour is found and deleted successfully send the deleted tour
-    res.json({
-      status: StatusCodes.OK,
-      message: `Tour deleted successfully with ${tourId}`,
-      deletedTour: foundTour,
-    });
-  } catch {
-    // If error oocurs delteting tour send response
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      status: StatusCodes.INTERNAL_SERVER_ERROR,
-      message:
-        "Something went wrong trying to delete your tour. Please try again later.",
-    });
-  }
-};
+const deleteTour = ControllerHandlerFactory.deleteOneDocument(Tour);
 
 // * Aggregated routes
 const getAllToursStats = async (req, res) => {

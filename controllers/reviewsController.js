@@ -6,17 +6,21 @@ const getAllReviews = async (req, res) => {
     path: "tour",
     select: "name",
   });
-  // .lean();
-  //  ? check later
-  // reviews.forEach((reviewIn) => {
-  //   if (reviewIn.tour) {
-  //     delete reviewIn.tour.tourDurationInWeeks;
-  //   }
-  // });
 
   res
     .status(StatusCodes.OK)
     .json({ status: "success", totalReviews: reviews.length, reviews });
+};
+
+const getSingleTourReview = async (req, res) => {
+  const reviews = await Review.find({ tour: req.params.tourId }).populate({
+    path: "tour",
+    select: "name",
+  });
+
+  res
+    .status(StatusCodes.OK)
+    .json({ status: "success", results: reviews.length, reviews });
 };
 
 const createReview = async (req, res) => {
@@ -27,4 +31,4 @@ const createReview = async (req, res) => {
   res.status(StatusCodes.OK).json({ status: "success", newReview });
 };
 
-module.exports = { getAllReviews, createReview };
+module.exports = { getAllReviews, createReview, getSingleTourReview };

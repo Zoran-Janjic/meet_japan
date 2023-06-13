@@ -56,7 +56,7 @@ tourRouter
   );
 
 tourRouter
-  .route("/:tourId")
+  .route("/:id") // changned   .route("/:tourId") to id becouse of the geberal handler factory function
   .get(
     applicationMiddleware.RouteProtect.protectedRoute,
     tourController.getTour
@@ -68,7 +68,7 @@ tourRouter
   )
   .delete(
     applicationMiddleware.RouteProtect.protectedRoute,
-    applicationMiddleware.RoleRestrictedRoute.restrictTo("admin", "tourguide"),
+    // applicationMiddleware.RoleRestrictedRoute.restrictTo("admin", "tourguide"),
     tourController.deleteTour
   );
 
