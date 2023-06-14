@@ -10,16 +10,7 @@ const getUser = ControllerHandlerFactory.getDocument(
   DatabaseOperationsConstants.GET_DOCUMENT_BY_ID
 );
 // * Get all registered users
-const getUsers = async (req, res) => {
-  const allUsers = await User.find();
-  helpers.createHttpResponse(
-    res,
-    StatusCodes.OK,
-    "success",
-    "All registered users",
-    allUsers
-  );
-};
+const getUsers = ControllerHandlerFactory.getAllDocuments(User);
 
 // * Update user details for only updating the data which is not the password
 const updateUser = async (req, res) => {
