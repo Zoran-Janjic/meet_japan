@@ -10,6 +10,16 @@ check the nested routes with express
 */
 
 reviewRouter
+  .route("/")
+  .get(reviewsController.getSingleTourReview) // * Merged params from the /:tourId/reviews
+  .post(
+    applicationMiddleware.RouteProtect.protectedRoute,
+    applicationMiddleware.RoleRestrictedRoute.restrictTo("user"),
+    applicationMiddleware.ReviewsMiddleware.setTourAndUserIdForReview,
+    reviewsController.createReview
+  );
+
+reviewRouter
   .route("/allReviews")
   .get(reviewsController.getAllReviews)
   .post(
@@ -19,12 +29,9 @@ reviewRouter
   );
 
 reviewRouter
-  .route("/")
-  .get(reviewsController.getSingleTourReview)
-  .post(
-    applicationMiddleware.RouteProtect.protectedRoute,
-    applicationMiddleware.RoleRestrictedRoute.restrictTo("user"),
-    reviewsController.createReview
-  );
+  .route("/:id")
+  .get(reviewsController.getSingleReview)
+  .delete(reviewsController.deleteReview)
+  .patch(reviewsController.updateReview);
 
 module.exports = reviewRouter;

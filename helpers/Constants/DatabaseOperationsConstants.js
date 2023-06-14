@@ -1,0 +1,12 @@
+const DELETE_SINGLE_DOCUMENT_BY_ID = "findByIdAndDelete";
+const UPDATE_SINGLE_DOCUMENT_BY_ID = "findByIdAndUpdate";
+const CREATE_NEW_DOCUMENT = "create";
+const GET_DOCUMENT_BY_ID = "findById";
+const GET_ALL_DOCUMENTS = "find()";
+module.exports = {
+  DELETE_SINGLE_DOCUMENT_BY_ID,
+  UPDATE_SINGLE_DOCUMENT_BY_ID,
+  CREATE_NEW_DOCUMENT,
+  GET_DOCUMENT_BY_ID,
+  GET_ALL_DOCUMENTS,
+};

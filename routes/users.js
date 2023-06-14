@@ -6,9 +6,17 @@ const applicationMiddleware = require("../middleware/index");
 
 userRouter
   .route("/")
-  .get(
+  // .get( ADD LATER FOR  /ME
+  //   applicationMiddleware.RouteProtect.protectedRoute,
+  //   usersController.getUser
+  // )
+  .patch(
     applicationMiddleware.RouteProtect.protectedRoute,
-    usersController.getUser
+    usersController.updateUser
+  )
+  .delete(
+    applicationMiddleware.RouteProtect.protectedRoute,
+    usersController.deleteSelfUser
   );
 
 userRouter
@@ -19,21 +27,7 @@ userRouter
   );
 
 userRouter
-  .route("/")
-  .patch(
-    applicationMiddleware.RouteProtect.protectedRoute,
-    usersController.updateUser
-  );
-
-userRouter
-  .route("/")
-  .delete(
-    applicationMiddleware.RouteProtect.protectedRoute,
-    usersController.deleteSelfUser
-  );
-
-userRouter
-  .route("/:userId")
+  .route("/:id")
   .get(
     applicationMiddleware.RouteProtect.protectedRoute,
     usersController.getUser

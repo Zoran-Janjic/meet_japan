@@ -1,13 +1,15 @@
 const { StatusCodes } = require("http-status-codes");
 const User = require("../models/User");
 const helpers = require("../helpers/index");
+const ControllerHandlerFactory = require("../helpers/FactoryHandlerFunctions/ControllerHandlerFactory");
+const DatabaseOperationsConstants = require("../helpers/Constants/DatabaseOperationsConstants");
 
-// ! add deleteUserByAdmin  and deleteSelfByUser
-
-const getUser = (req, res) => {
-  res.status(200).json({ message: "Route working" });
-};
-
+// * Get single user
+const getUser = ControllerHandlerFactory.getDocument(
+  User,
+  DatabaseOperationsConstants.GET_DOCUMENT_BY_ID
+);
+// * Get all registered users
 const getUsers = async (req, res) => {
   const allUsers = await User.find();
   helpers.createHttpResponse(
@@ -19,7 +21,7 @@ const getUsers = async (req, res) => {
   );
 };
 
-// ? Update user details
+// * Update user details for only updating the data which is not the password
 const updateUser = async (req, res) => {
   const fieldsToRemove = [
     "passwordResetToken",
@@ -63,6 +65,7 @@ const updateUser = async (req, res) => {
   }
 };
 
+// * Delete self by the user which sets their active propertie to false
 const deleteSelfUser = async (req, res) => {
   // Check if tour exists
   const foundUser = await User.findByIdAndUpdate(req.user.id, {

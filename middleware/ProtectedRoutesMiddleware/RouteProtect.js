@@ -33,6 +33,7 @@ const protectedRoute = async (req, res, next) => {
   if (currentUser.wasPasswordChangedAfterJWTIssued(decodedToken.iat)) {
     return next(new JsonWebTokenError("Password changed"));
   }
+
   // * Grant access to the protected route as the user is successfully authenticated
   req.user = currentUser;
   next();

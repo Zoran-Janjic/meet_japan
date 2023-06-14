@@ -17,6 +17,7 @@ const tourRouter = require("./routes/tours");
 const usersRouter = require("./routes/users");
 const authRouter = require("./routes/auth");
 const reviewRouter = require("./routes/reviews");
+const adminRouter = require("./routes/admin");
 // * Security
 const security = require("./helpers/Security");
 
@@ -51,7 +52,7 @@ app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/reviews", reviewRouter);
-
+app.use("/api/v1/admin", adminRouter);
 // * Unknown endpoint
 app.all("*", unknownEndpointHandler);
 // * This has to be the last loaded middleware. So it can catch all errors

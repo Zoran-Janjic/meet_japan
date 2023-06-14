@@ -1,3 +1,6 @@
 
 
 1. Dont forget to call next() in your middleware
+
+2. Use factory functions for repetitive functions
+

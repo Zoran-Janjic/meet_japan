@@ -1,73 +1,33 @@
 const { StatusCodes } = require("http-status-codes");
 const Tour = require("../models/Tour");
-const CustomController = require("../customClasses/CustomController");
 const ControllerHandlerFactory = require("../helpers/FactoryHandlerFunctions/ControllerHandlerFactory");
-
+const DatabaseOperationsConstants = require("../helpers/Constants/DatabaseOperationsConstants");
 // * Route handlers
-const getTours = async (req, res) => {
-  // *  Custom controller that does all the filtering options as we pass to it
-  // * The query object and the query string that we receive
-  const filteredQueryObject = new CustomController(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
+const getTours = ControllerHandlerFactory.getAllDocuments(
+  Tour,
+  DatabaseOperationsConstants.GET_ALL_DOCUMENTS
+);
 
-  // *  Execute the final query and send result
-  const allTours = await filteredQueryObject.query;
+const addTour = ControllerHandlerFactory.createDocument(
+  Tour,
+  DatabaseOperationsConstants.CREATE_NEW_DOCUMENT
+);
 
-  res.json({
-    status: StatusCodes.OK,
-    totalItems: allTours.length,
-    data: allTours,
-  });
-};
+const getTour = ControllerHandlerFactory.getDocument(
+  Tour,
+  DatabaseOperationsConstants.GET_DOCUMENT_BY_ID,
+  { path: "tourReviews" }
+);
 
-const addTour = async (req, res) => {
-  const newTour = await Tour.create(req.body);
+const updateTour = ControllerHandlerFactory.updateDocument(
+  Tour,
+  DatabaseOperationsConstants.UPDATE_SINGLE_DOCUMENT_BY_ID
+);
 
-  res.json({
-    status: StatusCodes.CREATED,
-    message: "Created",
-    data: newTour,
-  });
-};
-
-const getTour = async (req, res) => {
-  const foundTour = await Tour.findById(req.params.tourId).populate(
-    "tourReviews"
-  );
-
-  if (foundTour != null) {
-    res.json({
-      status: StatusCodes.OK,
-      data: {
-        tour: foundTour,
-      },
-    });
-  } else {
-    res.json({
-      status: StatusCodes.NOT_FOUND,
-      message: `No tour found for the id: ${req.params.tourId}`,
-    });
-  }
-};
-
-const updateTour = async (req, res) => {
-  const updatedTour = await Tour.findByIdAndUpdate(
-    req.params.tourId,
-    req.body,
-    { new: true, runValidators: true }
-  );
-
-  if (updatedTour) {
-    res.json({ status: StatusCodes.OK, data: updatedTour });
-  } else {
-    res.json({ status: StatusCodes.NOT_FOUND, message: "Failed" });
-  }
-};
-
-const deleteTour = ControllerHandlerFactory.deleteOneDocument(Tour);
+const deleteTour = ControllerHandlerFactory.deleteOneDocument(
+  Tour,
+  DatabaseOperationsConstants.DELETE_SINGLE_DOCUMENT_BY_ID
+);
 
 // * Aggregated routes
 const getAllToursStats = async (req, res) => {

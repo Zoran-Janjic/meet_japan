@@ -6,8 +6,8 @@ const USER_NOT_REGISTERED = "User not found";
 const PASSWORD_CHANGED = "Password changed";
 const handleDuplicateKeyError = (customError, err) => {
   const newError = { ...customError };
-
-  switch (err.message) {
+  console.log(newError);
+  switch (err.msg) {
   case INVALID_TOKEN:
     newError.msg = "Invalid token.";
     newError.statusCode = StatusCodes.UNAUTHORIZED;

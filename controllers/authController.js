@@ -152,6 +152,7 @@ const resetPassword = async (req, res, next) => {
 };
 
 // ? Update user password
+// ! Do not use the factory update method for this operation
 const updatePassword = async (req, res, next) => {
   const { currentPassword, updatedPassword, passwordConfirmation } = req.body;
   if (!currentPassword || !updatedPassword || !passwordConfirmation) {

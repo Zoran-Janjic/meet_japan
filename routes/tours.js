@@ -63,7 +63,7 @@ tourRouter
   )
   .patch(
     applicationMiddleware.RouteProtect.protectedRoute,
-    applicationMiddleware.RoleRestrictedRoute.restrictTo("admin", "tourguide"),
+    // applicationMiddleware.RoleRestrictedRoute.restrictTo("admin", "tourguide"),
     tourController.updateTour
   )
   .delete(
