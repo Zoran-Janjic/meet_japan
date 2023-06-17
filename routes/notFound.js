@@ -1,8 +1,13 @@
+const helpers = require("../helpers/index");
+const { StatusCodes } = require("http-status-codes");
+
 const unknownEndpoint = (req, res) => {
-  res.status(404).send({
-    status: "fail",
-    message: `Endpoint ${req.originalUrl} does not exist on thi server.`,
-  });
+  helpers.createHttpResponse(
+    res,
+    StatusCodes.NOT_FOUND,
+    `Endpoint ${req.originalUrl} does not exist on this server.`,
+    "Failed"
+  );
 };
 
 module.exports = unknownEndpoint;

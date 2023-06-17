@@ -1,18 +1,17 @@
-const { StatusCodes } = require("http-status-codes");
-const User = require("../models/User");
-const helpers = require("../helpers/index");
-const ControllerHandlerFactory = require("../helpers/FactoryHandlerFunctions/ControllerHandlerFactory");
-const DatabaseOperationsConstants = require("../helpers/Constants/DatabaseOperationsConstants");
+// Import necessary modules and files
+const { StatusCodes } = require("http-status-codes"); // Import StatusCodes from http-status-codes module
+const User = require("../models/User"); // Import User model
+const helpers = require("../helpers/index"); // Import helper functions
+const ControllerHandlerFactory = require("../helpers/FactoryHandlerFunctions/ControllerHandlerFactory"); // Import Controller Handler Factory
+const DatabaseOperationsConstants = require("../helpers/Constants/DatabaseOperationsConstants"); // Import Database Operations Constants
 
-// * Get single user
+// ? Get single user
 const getUser = ControllerHandlerFactory.getDocument(
   User,
   DatabaseOperationsConstants.GET_DOCUMENT_BY_ID
 );
-// * Get all registered users
-const getUsers = ControllerHandlerFactory.getAllDocuments(User);
 
-// * Update user details for only updating the data which is not the password
+// ? Update user details for only updating the data which is not the password
 const updateUser = async (req, res) => {
   const fieldsToRemove = [
     "passwordResetToken",
@@ -38,6 +37,7 @@ const updateUser = async (req, res) => {
       }
     );
 
+    // ? Create an HTTP response with success status and updated user details
     helpers.createHttpResponse(
       res,
       StatusCodes.OK,
@@ -46,6 +46,8 @@ const updateUser = async (req, res) => {
       updatedUser
     );
   } else {
+    // ? Create an HTTP response with success status and a message if no data is
+    // ?  provided to update the user details
     helpers.createHttpResponse(
       res,
       StatusCodes.OK,
@@ -56,13 +58,14 @@ const updateUser = async (req, res) => {
   }
 };
 
-// * Delete self by the user which sets their active propertie to false
+// ? Delete self by the user which sets their active property to false as only admin
+// ? can delete users from the db
 const deleteSelfUser = async (req, res) => {
-  // Check if tour exists
   const foundUser = await User.findByIdAndUpdate(req.user.id, {
     active: false,
   });
 
+  // ? Create an HTTP response with success status and a message confirming the deletion
   helpers.createHttpResponse(
     res,
     StatusCodes.OK,
@@ -71,9 +74,16 @@ const deleteSelfUser = async (req, res) => {
   );
 };
 
+// ? Get current user details
+const getCurrentUserDetails = ControllerHandlerFactory.getDocument(
+  User,
+  DatabaseOperationsConstants.GET_DOCUMENT_BY_ID
+);
+
+// ? Export the functions to be used by other modules
 module.exports = {
   getUser,
   updateUser,
   deleteSelfUser,
-  getUsers,
+  getCurrentUserDetails,
 };

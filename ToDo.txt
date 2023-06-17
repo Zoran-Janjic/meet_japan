@@ -1,3 +1,5 @@
 1.add total number of review on get all tours
 
-2. Add admin router protection
+2. Add admin create user endpoint
+
+3. Check that the tour that is being deleted is only deleted by the tour guide who created it

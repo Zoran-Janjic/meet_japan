@@ -74,10 +74,10 @@ const createDocument = (Model, actionType) => async (req, res) => {
     );
   }
 };
+
 const getDocument =
   (Model, actionType, populateOptions) => async (req, res) => {
     let query = Model[actionType](req.params.id);
-
     if (populateOptions) query = query.populate(populateOptions);
 
     const foundDocument = await query;
