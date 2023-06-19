@@ -3,3 +3,7 @@
 2. Add admin create user endpoint
 
 3. Check that the tour that is being deleted is only deleted by the tour guide who created it
+
+4. Change the names from top five tours to six
+
+5. Add the tourguide review models and functions for the users to leave tour guide reviews
