@@ -58,10 +58,14 @@ const tourSchema = new mongoose.Schema(
       default: 0,
       min: [0, "Rating must be between 0 and 5"],
       max: [5, "Rating must be between 0 and 5"],
+      // ? Setter function
+      set: (val) => Math.round(val * 10),
     },
     ratingQuantity: {
       type: Number,
       default: 0,
+      // ?  setter function is used to modify the value of
+      // ? a field before it is stored in the database.
       min: [0, "Rating must be at least 0."],
     },
     duration: {
@@ -144,7 +148,7 @@ const tourSchema = new mongoose.Schema(
   }
 );
 
-//! Creating custom indexes only on most querried data
+//! Creating custom indexes only on most queried data
 //* If collection is only written to but not queried no benefit adding indexes
 //* Compound index that gets the price ascending and average descending
 //* 1 indicates an ascending order, while -1 indicates a descending order.

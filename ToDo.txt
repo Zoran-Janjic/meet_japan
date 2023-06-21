@@ -1,4 +1,4 @@
-1.add total number of review on get all tours
+1. Add total number of review on get all tours
 
 2. Add admin create user endpoint
 
@@ -7,3 +7,5 @@
 4. Change the names from top five tours to six
 
 5. Add the tourguide review models and functions for the users to leave tour guide reviews
+
+6. Check if uniqe review per user is working

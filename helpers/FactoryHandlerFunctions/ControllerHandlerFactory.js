@@ -31,24 +31,33 @@ const deleteOneDocument = (Model, actionType) => async (req, res) => {
 };
 
 const updateDocument = (Model, actionType) => async (req, res) => {
-  const updatedDocument = await Model[actionType](req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  if (Object.keys(req.body).length !== 0) {
+    const updatedDocument = await Model[actionType](req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
-  if (updatedDocument) {
-    helpers.createHttpResponse(
-      res,
-      StatusCodes.OK,
-      `Document with id ${req.params.id} updated successfully.`,
-      "Success",
-      updatedDocument
-    );
+    if (updatedDocument) {
+      helpers.createHttpResponse(
+        res,
+        StatusCodes.OK,
+        `Document with id ${req.params.id} updated successfully.`,
+        "Success",
+        updatedDocument
+      );
+    } else {
+      helpers.createHttpResponse(
+        res,
+        StatusCodes.NOT_FOUND,
+        `Failed updating the document with ${req.params.id}`,
+        "Failed"
+      );
+    }
   } else {
     helpers.createHttpResponse(
       res,
-      StatusCodes.NOT_FOUND,
-      `Failed updating the document with ${req.params.id}`,
+      StatusCodes.BAD_REQUEST,
+      `Failed updating the document with ${req.params.id} as no updated data was received.`,
       "Failed"
     );
   }
@@ -61,7 +70,7 @@ const createDocument = (Model, actionType) => async (req, res) => {
     helpers.createHttpResponse(
       res,
       StatusCodes.CREATED,
-      `Document with id ${req.params.id} created successfully.`,
+      `Document with id ${newDocument.id} created successfully.`,
       "Success",
       newDocument
     );

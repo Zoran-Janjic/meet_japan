@@ -23,5 +23,6 @@ module.exports = {
     "implicit-arrow-linebreak": "off",
     "no-return-await": "off",
     "operator-linebreak": "off",
+    "func-names": "off",
   },
 };
