@@ -110,6 +110,7 @@ const getAllDocuments = (Model) => async (req, res) => {
     .paginate();
 
   // *  Execute the final query and send result
+  // ? Add explain(); if you want stats of the query.
   const allDocuments = await filteredQueryObject.query;
 
   if (allDocuments) {
