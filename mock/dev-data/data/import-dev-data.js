@@ -26,6 +26,7 @@ const allUsers = JSON.parse(
 const allReviews = JSON.parse(
   fs.readFileSync(`${__dirname}/reviews.json`, "utf-8")
 );
+
 // ? Import data to the database
 const importDataToTourCollection = async () => {
   try {
