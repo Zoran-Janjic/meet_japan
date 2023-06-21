@@ -144,6 +144,13 @@ const tourSchema = new mongoose.Schema(
   }
 );
 
+//! Creating custom indexes only on most querried data
+//* If collection is only written to but not queried no benefit adding indexes
+//* Compound index that gets the price ascending and average descending
+//* 1 indicates an ascending order, while -1 indicates a descending order.
+tourSchema.index({ price: 1, ratingAverage: -1 });
+tourSchema.index({ slug: 1 });
+
 // * Virtual properties
 /*
   virtual properties are fields that are not stored in the database,
@@ -164,6 +171,7 @@ tourSchema.virtual("tourReviews", {
   foreignField: "tour", // ? Tour field in the review model
   localField: "_id",
 });
+
 // * Document middleware
 /*
 allows you to add custom logic to be executed before or after certain
