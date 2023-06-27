@@ -10,3 +10,11 @@ Create a factory function that takes the varying parameters as arguments and ret
 Move the common logic of the repetitive functions into the factory function.
 Modify the original functions to call the factory function and return the result.
 
+3. // {
+//     "email": "admin@natours.io",
+//     "password": "test1234"
+// } 
+{
+    "email": "laura@example.com",
+    "password": "test1234"
+}
