@@ -2,6 +2,8 @@ const { StatusCodes } = require("http-status-codes");
 const Tour = require("../models/Tour");
 const ControllerHandlerFactory = require("../helpers/FactoryHandlerFunctions/ControllerHandlerFactory");
 const DatabaseOperationsConstants = require("../helpers/Constants/DatabaseOperationsConstants");
+const BadRequestError = require("../errors/index");
+const createHttpResponse = require("../helpers/createHttpResponse");
 // * Route handlers
 const getTours = ControllerHandlerFactory.getAllDocuments(
   Tour,
@@ -166,6 +168,84 @@ const getMonthlyStats = async (req, res) => {
   }
 };
 
+// * Geospatial routes
+// * This function is responsible for finding tours within
+// * a certain distance from a given latitude and longitude.
+const getToursWithin = async (req, res, next) => {
+  // ? Extracting required parameters from the request
+  const { distance, latlng, unit } = req.params;
+
+  // ? Checking if all required parameters are provided
+  // ? If any parameter is missing, send a Bad Request error
+  if (!distance || !latlng || !unit) {
+    next(new BadRequestError("Please provide valid request parameters."));
+  }
+  // ? Splitting the latlng string into latitude and longitude values
+  const [lat, lng] = latlng.split(",");
+
+  // ? Calculating the radius of the sphere based on the provided distance and unit
+  const radius = unit === "mi" ? distance / 3963.2 : distance / 6378.1;
+
+  // ? Finding tours within the specified location using the startLocation field in the Tour model
+  const tours = await Tour.find({
+    startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+  });
+
+  // ? Sending the HTTP response with the found tours
+  createHttpResponse(
+    res,
+    StatusCodes.OK,
+    "Success",
+    `Total tours found ${tours.length}`,
+    tours
+  );
+};
+
+// ? This function is responsible for calculating the distances
+// ? between tours and a given latitude and longitude.
+const getTourDistances = async (req, res, next) => {
+  // ? Extracting required parameters from the request
+  const { latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(",");
+
+  // ? Checking if all required parameters are provided
+  if (!latlng || !unit) {
+    // ? If any parameter is missing, send a Bad Request error
+    next(new BadRequestError("Please provide valid request parameters."));
+  }
+  // ? Determining the distance unit multiplier based on the provided unit
+  const multiplier = unit === "mi" ? 0.000621371 : 0.001;
+
+  // ? Using the Tour model's aggregate function to calculate distances and project relevant fields
+  const tourDistances = await Tour.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: "Point",
+          coordinates: [lng * 1, lat * 1],
+        },
+        distanceField: "distance",
+        distanceMultiplier: multiplier,
+      },
+    },
+    {
+      $project: {
+        distance: 1,
+        name: 1,
+      },
+    },
+  ]);
+
+  // ? Sending the HTTP response with the found tours
+  createHttpResponse(
+    res,
+    StatusCodes.OK,
+    "Success",
+    `Total tours found ${tourDistances.length}`,
+    tourDistances
+  );
+};
+
 module.exports = {
   getTours,
   getTour,
@@ -174,4 +254,6 @@ module.exports = {
   deleteTour,
   getAllToursStats,
   getMonthlyStats,
+  getToursWithin,
+  getTourDistances,
 };
