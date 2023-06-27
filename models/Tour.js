@@ -154,6 +154,8 @@ const tourSchema = new mongoose.Schema(
 //* 1 indicates an ascending order, while -1 indicates a descending order.
 tourSchema.index({ price: 1, ratingAverage: -1 });
 tourSchema.index({ slug: 1 });
+//* For geo spatial queries we need to add this index to startLocation
+tourSchema.index({ startLocation: "2dsphere" });
 
 // * Virtual properties
 /*

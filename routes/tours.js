@@ -33,6 +33,19 @@ tourRouter.route("/top-5-price").get(
   tourController.getTours
 );
 
+// ? Geospatial routes
+
+// ? Get tours within a specific distance from a specific point
+// ? Example : /tours-within/233/center/34.111745,-118.113491/unit/mi
+tourRouter
+  .route("/tours-within/:distance/center/:latlng/unit/:unit")
+  .get(tourController.getToursWithin);
+
+// ?  Calculate distances from a point to tours
+tourRouter
+  .route("/distances/:latlng/unit/:unit")
+  .get(tourController.getTourDistances);
+
 // ? Aggregated routes
 tourRouter.route("/global-stats").get(tourController.getAllToursStats); // ? Get global statistics for all tours
 
