@@ -8,4 +8,4 @@
 
 5. Add the tourguide review models and functions for the users to leave tour guide reviews
 
-6. Check if uniqe review per user is working
+6. Check if unique review per user is working

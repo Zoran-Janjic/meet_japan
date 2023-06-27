@@ -3,4 +3,10 @@
 1. Dont forget to call next() in your middleware
 
 2. Use factory functions for repetitive functions
+- To refactor repetitive functions using factory functions, you can follow these steps:
+
+Identify the repetitive functions that have similar behavior or patterns.
+Create a factory function that takes the varying parameters as arguments and returns a new function.
+Move the common logic of the repetitive functions into the factory function.
+Modify the original functions to call the factory function and return the result.
 
