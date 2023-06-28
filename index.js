@@ -32,14 +32,13 @@ app.use(cors());
 if (process.env.NODE_ENV === "production") {
   app.use("/api/v1", security.rateLimiterConfig);
   app.use(security.configuredHelmet());
+  app.use(security.userDataSanitizer());
+  app.use(security.xssSanitizer());
+  app.use(security.preventParameterPollution());
 }
 // ! Any middleware needed for development only
 if (process.env.NODE_ENV !== "production") {
   app.use(Logger.requestLogger);
-  app.use(security.configuredHelmet());
-  app.use(security.userDataSanitizer());
-  app.use(security.xssSanitizer());
-  app.use(security.preventParameterPollution());
 }
 
 // ? Check how to serve images

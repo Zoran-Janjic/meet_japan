@@ -9,25 +9,25 @@ const reviewRouter = require("./reviews");
 tourRouter.route("/all-tours-stats").get(tourController.getAllToursStats);
 
 // ? Aliased tour routes
-tourRouter.route("/lowest-5-price").get(
+tourRouter.route("/lowest-6-price").get(
   // ? Apply middleware for fetching the top five tours with the lowest price
   applicationMiddleware.AliasedRoutes.topFiveHighestPrice,
   tourController.getTours
 );
 
-tourRouter.route("/top-5-rated").get(
+tourRouter.route("/top-6-rated").get(
   // ? Apply middleware for fetching the top five highest-rated tours
   applicationMiddleware.AliasedRoutes.topFiveHighestPrice,
   tourController.getTours
 );
 
-tourRouter.route("/top-5-newest").get(
+tourRouter.route("/top-6-newest").get(
   // ? Apply middleware for fetching the top five newest tours
   applicationMiddleware.AliasedRoutes.topFiveNewest,
   tourController.getTours
 );
 
-tourRouter.route("/top-5-price").get(
+tourRouter.route("/top-6-price").get(
   // ? Apply middleware for fetching the top five tours with the highest price
   applicationMiddleware.AliasedRoutes.topFiveHighestPrice,
   tourController.getTours
