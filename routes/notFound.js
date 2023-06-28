@@ -1,8 +1,8 @@
-const helpers = require("../helpers/index");
+const createHttpResponse = require("../helpers/createHttpResponse");
 const { StatusCodes } = require("http-status-codes");
 
 const unknownEndpoint = (req, res) => {
-  helpers.createHttpResponse(
+  createHttpResponse(
     res,
     StatusCodes.NOT_FOUND,
     `Endpoint ${req.originalUrl} does not exist on this server.`,
