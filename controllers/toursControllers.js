@@ -3,7 +3,7 @@ const Tour = require("../models/Tour");
 const ControllerHandlerFactory = require("../helpers/FactoryHandlerFunctions/ControllerHandlerFactory");
 const DatabaseOperationsConstants = require("../helpers/Constants/DatabaseOperationsConstants");
 const BadRequestError = require("../errors/index");
-const createHttpResponse = require("../helpers/createHttpResponse");
+const helpers = require("../helpers");
 // * Route handlers
 const getTours = ControllerHandlerFactory.getAllDocuments(
   Tour,
@@ -192,7 +192,7 @@ const getToursWithin = async (req, res, next) => {
   });
 
   // ? Sending the HTTP response with the found tours
-  createHttpResponse(
+  helpers.createHttpResponse(
     res,
     StatusCodes.OK,
     "Success",

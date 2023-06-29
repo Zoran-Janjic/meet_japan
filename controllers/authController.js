@@ -3,7 +3,7 @@ const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, CustomAPIError } = require("../errors");
 const sendEmail = require("../helpers/sendEmail");
 const crypto = require("crypto");
-const helpers = require("../helpers/");
+const helpers = require("../helpers");
 // const createHttpResponse = require("../helpers/createHttpResponse");
 // ? Add special route for adding admin privilege
 

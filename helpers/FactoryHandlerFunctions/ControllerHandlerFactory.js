@@ -1,5 +1,5 @@
 const { StatusCodes } = require("http-status-codes");
-const helpers = require("../index");
+const createHttpResponse = require("../createHttpResponse");
 const CustomController = require("../../customClasses/CustomController");
 
 const deleteOneDocument = (Model, actionType) => async (req, res) => {
@@ -38,7 +38,7 @@ const updateDocument = (Model, actionType) => async (req, res) => {
     });
 
     if (updatedDocument) {
-      helpers.createHttpResponse(
+      createHttpResponse(
         res,
         StatusCodes.OK,
         `Document with id ${req.params.id} updated successfully.`,
@@ -46,7 +46,7 @@ const updateDocument = (Model, actionType) => async (req, res) => {
         updatedDocument
       );
     } else {
-      helpers.createHttpResponse(
+      createHttpResponse(
         res,
         StatusCodes.NOT_FOUND,
         `Failed updating the document with ${req.params.id}`,
@@ -54,7 +54,7 @@ const updateDocument = (Model, actionType) => async (req, res) => {
       );
     }
   } else {
-    helpers.createHttpResponse(
+    createHttpResponse(
       res,
       StatusCodes.BAD_REQUEST,
       `Failed updating the document with ${req.params.id} as no updated data was received.`,
@@ -67,7 +67,7 @@ const createDocument = (Model, actionType) => async (req, res) => {
   const newDocument = await Model[actionType](req.body);
 
   if (newDocument) {
-    helpers.createHttpResponse(
+    createHttpResponse(
       res,
       StatusCodes.CREATED,
       `Document with id ${newDocument.id} created successfully.`,
@@ -75,7 +75,7 @@ const createDocument = (Model, actionType) => async (req, res) => {
       newDocument
     );
   } else {
-    helpers.createHttpResponse(
+    createHttpResponse(
       res,
       StatusCodes.INTERNAL_SERVER_ERROR,
       "Failed creating new document, please try again later.",
@@ -92,7 +92,7 @@ const getDocument =
     const foundDocument = await query;
 
     if (foundDocument) {
-      helpers.createHttpResponse(
+      createHttpResponse(
         res,
         StatusCodes.OK,
         `Document with id ${req.params.id} found successfully.`,
@@ -100,7 +100,7 @@ const getDocument =
         foundDocument
       );
     } else {
-      helpers.createHttpResponse(
+      createHttpResponse(
         res,
         StatusCodes.NOT_FOUND,
         "Failed finding your document, please try again later.",
@@ -123,7 +123,7 @@ const getAllDocuments = (Model) => async (req, res) => {
   const allDocuments = await filteredQueryObject.query;
 
   if (allDocuments) {
-    helpers.createHttpResponse(
+    createHttpResponse(
       res,
       StatusCodes.OK,
       `Total documents retrieved: ${allDocuments.length}`,
@@ -131,7 +131,7 @@ const getAllDocuments = (Model) => async (req, res) => {
       allDocuments
     );
   } else {
-    helpers.createHttpResponse(
+    createHttpResponse(
       res,
       StatusCodes.NOT_FOUND,
       "Failed finding your documents, please try again later.",
