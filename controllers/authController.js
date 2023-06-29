@@ -3,15 +3,15 @@ const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, CustomAPIError } = require("../errors");
 const sendEmail = require("../helpers/sendEmail");
 const crypto = require("crypto");
-const createResponseWithJWT = require("../helpers/CreateResponseWithJWT");
-const createHttpResponse = require("../helpers/createHttpResponse");
+const helpers = require("../helpers");
+// const createHttpResponse = require("../helpers/createHttpResponse");
 // ? Add special route for adding admin privilege
 
 // ? Register new user
 const registerUser = async (req, res) => {
   const newUser = await User.create(req.body);
   newUser.password = undefined;
-  createResponseWithJWT(
+  helpers.createResponseWithJWT(
     res,
     StatusCodes.CREATED,
     "success",
@@ -41,7 +41,7 @@ const loginUser = async (req, res, next) => {
 
   // If email and password are correct, create a JWT token for the user
   // Return success response with the JWT token
-  createResponseWithJWT(
+  helpers.createResponseWithJWT(
     res,
     StatusCodes.CREATED,
     "success",
@@ -85,8 +85,7 @@ const forgotPassword = async (req, res, next) => {
         "Password reset token from Meet Japan.Valid for 10 minutes.",
       emailText: userEmailMessage,
     });
-
-    createHttpResponse(
+    helpers.createHttpResponse(
       res,
       StatusCodes.OK,
       "success",
@@ -142,7 +141,7 @@ const resetPassword = async (req, res, next) => {
   await user.save();
   // * Log the user in and send the new JWT
 
-  createResponseWithJWT(
+  helpers.createResponseWithJWT(
     res,
     StatusCodes.OK,
     "success",
@@ -177,7 +176,7 @@ const updatePassword = async (req, res, next) => {
   // Save the updated user to the database
   await user.save();
   // Return success response with the JWT token
-  createResponseWithJWT(
+  helpers.createResponseWithJWT(
     res,
     StatusCodes.OK,
     "success",
