@@ -9,3 +9,5 @@
 5. Add the tourguide review models and functions for the users to leave tour guide reviews
 
 6. Check if unique review per user is working
+
+7. Use the createResponseWithJWT and createResponseHTTPresponse troughout
