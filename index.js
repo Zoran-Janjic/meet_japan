@@ -52,6 +52,12 @@ app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/reviews", reviewRouter);
 app.use("/api/v1/admin", adminRouter);
+// * The starting API call for GET /
+app.get("/", (req, res) => {
+  res.send(
+    "Welcome to my meet japan api. You can view the documentation here: https://documenter.getpostman.com/view/25275561/2s93z9bhMZ#intro"
+  );
+});
 // * Unknown endpoint
 app.all("*", unknownEndpointHandler);
 // * This has to be the last loaded middleware. So it can catch all errors
