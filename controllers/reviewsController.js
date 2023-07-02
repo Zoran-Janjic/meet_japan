@@ -25,6 +25,12 @@ const getSingleTourReview = async (req, res) => {
     .json({ status: "success", results: reviews.length, reviews });
 };
 
+const createTourGuideReview = async (req, res) => {
+  console.log("PARAMS ", req.params);
+  console.log("BODY ", req.body);
+  res.status(StatusCodes.OK).json({ status: "success", results: "" });
+};
+
 const createReview = ControllerHandlerFactory.createDocument(
   Review,
   DatabaseOperationsConstants.CREATE_NEW_DOCUMENT
@@ -51,4 +57,5 @@ module.exports = {
   deleteReview,
   updateReview,
   getSingleReview,
+  createTourGuideReview,
 };

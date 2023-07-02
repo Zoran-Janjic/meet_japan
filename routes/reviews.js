@@ -20,6 +20,12 @@ reviewRouter
     reviewsController.createReview
   );
 
+reviewRouter.route("/tourguide/:id").post(
+  applicationMiddleware.RoleRestrictedRoute.restrictTo("user"),
+  applicationMiddleware.ReviewsMiddleware.setTourGuideIdAndUserId,
+  reviewsController.createTourGuideReview
+);
+
 reviewRouter
   .route("/allReviews")
   .get(reviewsController.getAllReviews)

@@ -116,6 +116,24 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+// * Virtual properties
+/*
+  virtual properties are fields that are not stored in the database,
+  but are calculated on-the-fly based on other fields in the document.
+  Virtual properties can be useful for adding additional computed properties
+  to a document without actually storing them in the database.
+  - Virtuals cannot be used in a query as they are not saved to the database but
+   made on the database query
+*/
+
+userSchema.virtual("tourGuideReviews", {
+  ref: "TourGuideReview",
+  foreignField: "user",
+  localField: "_id",
+});
+
+// * End of virtual properties
+
 // * Document middleware
 /*
 allows you to add custom logic to be executed before or after certain
