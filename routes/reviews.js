@@ -20,11 +20,18 @@ reviewRouter
     reviewsController.createReview
   );
 
-reviewRouter.route("/tourguide/:id").post(
-  applicationMiddleware.RoleRestrictedRoute.restrictTo("user"),
-  applicationMiddleware.ReviewsMiddleware.setTourGuideIdAndUserId,
-  reviewsController.createTourGuideReview
-);
+reviewRouter
+  .route("/tourguide/:id")
+  .get(
+    applicationMiddleware.RoleRestrictedRoute.restrictTo("user"),
+    applicationMiddleware.ReviewsMiddleware.setTourGuideIdAndUserId,
+    reviewsController.getSingleTourGuideReview
+  )
+  .post(
+    applicationMiddleware.RoleRestrictedRoute.restrictTo("user"),
+    applicationMiddleware.ReviewsMiddleware.setTourGuideIdAndUserId,
+    reviewsController.createTourGuideReview
+  );
 
 reviewRouter
   .route("/allReviews")

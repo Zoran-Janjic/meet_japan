@@ -1,5 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
 const Review = require("../models/Review");
+const TourGuideReview = require("../models/TourGuideReview");
 const ControllerHandlerFactory = require("../helpers/FactoryHandlerFunctions/ControllerHandlerFactory");
 const DatabaseOperationsConstants = require("../helpers/Constants/DatabaseOperationsConstants");
 
@@ -25,10 +26,28 @@ const getSingleTourReview = async (req, res) => {
     .json({ status: "success", results: reviews.length, reviews });
 };
 
+const getAllTourGuideReviews = async (req, res) => {
+  const reviews = await TourGuideReview.find();
+
+  res
+    .status(StatusCodes.OK)
+    .json({ status: "success", results: reviews.length, reviews });
+};
+
+const getSingleTourGuideReview = async (req, res) => {
+  const reviews = await TourGuideReview.find({ tourGuide: req.params.id });
+
+  res
+    .status(StatusCodes.OK)
+    .json({ status: "success", results: reviews.length, reviews });
+};
+
+// ! TO DO get all reviews for a specific user
 const createTourGuideReview = async (req, res) => {
-  console.log("PARAMS ", req.params);
-  console.log("BODY ", req.body);
-  res.status(StatusCodes.OK).json({ status: "success", results: "" });
+  console.log(req.body);
+  const newReview = await TourGuideReview.create(req.body);
+
+  res.status(StatusCodes.OK).json({ status: "success", results: newReview });
 };
 
 const createReview = ControllerHandlerFactory.createDocument(
@@ -58,4 +77,6 @@ module.exports = {
   updateReview,
   getSingleReview,
   createTourGuideReview,
+  getAllTourGuideReviews,
+  getSingleTourGuideReview,
 };
