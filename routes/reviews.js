@@ -19,18 +19,25 @@ reviewRouter
     applicationMiddleware.ReviewsMiddleware.setTourAndUserIdForReview,
     reviewsController.createReview
   );
-
+//  ! Add delete and update
 reviewRouter
   .route("/tourguide/:id")
   .get(
-    applicationMiddleware.RoleRestrictedRoute.restrictTo("user"),
+    applicationMiddleware.RoleRestrictedRoute.restrictTo("user", "admin"),
     applicationMiddleware.ReviewsMiddleware.setTourGuideIdAndUserId,
     reviewsController.getSingleTourGuideReview
   )
   .post(
-    applicationMiddleware.RoleRestrictedRoute.restrictTo("user"),
+    applicationMiddleware.RoleRestrictedRoute.restrictTo("user", "admin"),
     applicationMiddleware.ReviewsMiddleware.setTourGuideIdAndUserId,
     reviewsController.createTourGuideReview
+  );
+
+reviewRouter
+  .route("/tourguide/")
+  .get(
+    applicationMiddleware.RoleRestrictedRoute.restrictTo("user", "admin"),
+    reviewsController.getAllTourGuideReviews
   );
 
 reviewRouter

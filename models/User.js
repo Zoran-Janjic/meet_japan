@@ -126,10 +126,11 @@ const userSchema = new mongoose.Schema(
    made on the database query
 */
 
-userSchema.virtual("tourGuideReviews", {
+userSchema.virtual("tourGuideUserReviews", {
   ref: "TourGuideReview",
-  foreignField: "user",
+  foreignField: "tourGuide",
   localField: "_id",
+  options: { select: "-tourGuide" }, // Exclude the tourGuide field from the populated results
 });
 
 // * End of virtual properties
@@ -207,7 +208,7 @@ userSchema.methods.createPasswordResetToken = function () {
 
 // * Query middleware
 // ? All query that start with find return only the active users
-userSchema.pre("/^find/", function (next) {
+userSchema.pre(/^find/, function (next) {
   this.find({ active: { $ne: false } });
   next();
 });

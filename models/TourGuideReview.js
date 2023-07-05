@@ -48,6 +48,23 @@ const TourGuideReviewSchema = new mongoose.Schema(
   }
 );
 
+// * Document middleware
+/*
+Allows you to add custom logic to be executed before or after certain
+events occur on a MongoDB document. This middleware can be used to perform
+various tasks, such as validation, data transformation, or triggering other
+actions based on changes to a document.
+*/
+
+TourGuideReviewSchema.pre(/^find/, function (next) {
+  this.populate({ path: "user", select: "name photo" }).populate({
+    path: "tourGuide",
+    select: "name photo",
+  });
+  next();
+});
+
+// * End of document middleware
 //  * Virtual properties
 
 // * End of virtual properties

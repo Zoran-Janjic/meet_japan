@@ -87,10 +87,10 @@ const createDocument = (Model, actionType) => async (req, res) => {
 const getDocument =
   (Model, actionType, populateOptions) => async (req, res) => {
     let query = Model[actionType](req.params.id);
+
     if (populateOptions) query = query.populate(populateOptions);
 
     const foundDocument = await query;
-
     if (foundDocument) {
       createHttpResponse(
         res,
@@ -112,6 +112,7 @@ const getDocument =
 const getAllDocuments = (Model) => async (req, res) => {
   // *  Custom controller that does all the filtering options as we pass to it
   // * The query object and the query string that we receive
+
   const filteredQueryObject = new CustomController(Model.find(), req.query)
     .filter()
     .sort()

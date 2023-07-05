@@ -26,30 +26,22 @@ const getSingleTourReview = async (req, res) => {
     .json({ status: "success", results: reviews.length, reviews });
 };
 
-const getAllTourGuideReviews = async (req, res) => {
-  const reviews = await TourGuideReview.find();
+// * Start of Tour Guide Review
 
-  res
-    .status(StatusCodes.OK)
-    .json({ status: "success", results: reviews.length, reviews });
-};
+const getAllTourGuideReviews =
+  ControllerHandlerFactory.getAllDocuments(TourGuideReview);
 
-const getSingleTourGuideReview = async (req, res) => {
-  const reviews = await TourGuideReview.find({ tourGuide: req.params.id });
+const getSingleTourGuideReview = ControllerHandlerFactory.getDocument(
+  TourGuideReview,
+  DatabaseOperationsConstants.GET_DOCUMENT_BY_ID
+);
 
-  res
-    .status(StatusCodes.OK)
-    .json({ status: "success", results: reviews.length, reviews });
-};
+const createTourGuideReview = ControllerHandlerFactory.createDocument(
+  TourGuideReview,
+  DatabaseOperationsConstants.CREATE_NEW_DOCUMENT
+);
 
-// ! TO DO get all reviews for a specific user
-const createTourGuideReview = async (req, res) => {
-  console.log(req.body);
-  const newReview = await TourGuideReview.create(req.body);
-
-  res.status(StatusCodes.OK).json({ status: "success", results: newReview });
-};
-
+// * End of Tour Guide Review
 const createReview = ControllerHandlerFactory.createDocument(
   Review,
   DatabaseOperationsConstants.CREATE_NEW_DOCUMENT
@@ -67,7 +59,8 @@ const updateReview = ControllerHandlerFactory.updateDocument(
 
 const getSingleReview = ControllerHandlerFactory.getDocument(
   Review,
-  DatabaseOperationsConstants.GET_DOCUMENT_BY_ID
+  DatabaseOperationsConstants.GET_DOCUMENT_BY_ID,
+  {}
 );
 module.exports = {
   getAllReviews,

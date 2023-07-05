@@ -8,7 +8,14 @@ const DatabaseOperationsConstants = require("../helpers/Constants/DatabaseOperat
 // ? Get single user
 const getUser = ControllerHandlerFactory.getDocument(
   User,
-  DatabaseOperationsConstants.GET_DOCUMENT_BY_ID
+  DatabaseOperationsConstants.GET_DOCUMENT_BY_ID,
+  { path: "tourGuideUserReviews" }
+);
+
+const getTourGuideUser = ControllerHandlerFactory.getDocument(
+  User,
+  DatabaseOperationsConstants.GET_DOCUMENT_BY_ID,
+  { path: "tourGuideUserReviews" }
 );
 
 // ? Update user details for only updating the data which is not the password
@@ -86,4 +93,5 @@ module.exports = {
   updateUser,
   deleteSelfUser,
   getCurrentUserDetails,
+  getTourGuideUser,
 };
