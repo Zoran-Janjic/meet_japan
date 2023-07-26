@@ -29,6 +29,14 @@ userRouter.route("/:id").get(
   usersController.getUser // ? Handle getting a specific user by ID logic
 );
 
+// ? Tour guides routes
+
 userRouter.route("/tourguide/:id").get(usersController.getTourGuideUser);
+
+// ? Agregated tourguide routes
+
+userRouter
+  .route("/tourGuides/topSixTourGuides")
+  .get(usersController.getTopSixTourGuides);
 
 module.exports = userRouter; // ? Export the router object for use in other modules

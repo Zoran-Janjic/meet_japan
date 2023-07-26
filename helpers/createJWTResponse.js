@@ -30,6 +30,9 @@ const createResponseWithJWT = (
     data: data || null, // Optional data, defaulting to null if not provided
     token, // JWT token included in the response
   });
+
+  // To print the cookies, use res.cookies
+  console.log(res.cookies);
 };
 
 // Export the function to make it available for use in other modules

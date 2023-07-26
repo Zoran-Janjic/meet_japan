@@ -19,7 +19,7 @@ reviewRouter
     applicationMiddleware.ReviewsMiddleware.setTourAndUserIdForReview,
     reviewsController.createReview
   );
-//  ! Add delete and update
+//  ! Add delete and update for a review
 reviewRouter
   .route("/tourguide/:id")
   .get(

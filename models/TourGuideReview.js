@@ -69,6 +69,10 @@ TourGuideReviewSchema.pre(/^find/, function (next) {
 
 // * End of virtual properties
 
+// * Static methods
+
+// * End of static methods
+
 const TourGuideReviewModel = mongoose.model(
   "TourGuideReview",
   TourGuideReviewSchema
