@@ -89,7 +89,6 @@ const getCurrentUserDetails = ControllerHandlerFactory.getDocument(
 );
 
 // * Aggregated routes
-
 const getTopSixTourGuides = async (req, res) => {
   /*
    the aggregation pipeline is a framework for data aggregation
@@ -127,6 +126,7 @@ const getTopSixTourGuides = async (req, res) => {
       {
         $project: {
           _id: 1,
+          id: "$_id", // Rename _id to id
           totalRatings: 1,
           avgRating: 1,
           tourGuideName: "$tourGuideData.name",
