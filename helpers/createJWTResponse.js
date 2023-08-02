@@ -24,7 +24,6 @@ const createResponseWithJWT = (
   // Set the JWT cookie in the response
   res.cookie("jwt", token, cookieOptions);
 
-  console.log("Cookies is sent", cookieOptions);
   // Set the HTTP status code and send the JSON response
   res.status(statusCode).json({
     status: statusMessage, // Status message of the response
@@ -32,9 +31,6 @@ const createResponseWithJWT = (
     data: data || null, // Optional data, defaulting to null if not provided
     token, // JWT token included in the response
   });
-
-  // To print the cookies, use res.cookies
-  console.log(res.cookies);
 };
 
 // Export the function to make it available for use in other modules

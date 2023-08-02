@@ -20,11 +20,14 @@ const reviewRouter = require("./routes/reviews");
 const adminRouter = require("./routes/admin");
 // * Security
 const security = require("./helpers/Security");
+const cookieParser = require("cookie-parser");
 
 //  * Middleware
 
 // ? Body parser, reading data from request body to req.body and limit payload to 10kb
 app.use(express.json({ limit: "20kb" }));
+// ? Cookie parser that parses data from cookie
+app.use(cookieParser());
 // ? Enable CORS middleware
 app.use(cors());
 
@@ -41,9 +44,15 @@ if (process.env.NODE_ENV !== "production") {
   app.use(Logger.requestLogger);
 }
 
-// ? Check how to serve images
+// ! Check how to serve images
 app.use(express.static(`${__dirname}/public`)); // ? Static files location
 
+// * Test middleware 
+// ! Remove later
+// app.use((req, res, next) => {
+//   console.log(req.cookies);
+//   next();
+// });
 // * End of middleware
 
 //  * Routers mounting

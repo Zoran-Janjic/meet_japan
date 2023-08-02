@@ -11,6 +11,9 @@ const protectedRoute = async (req, res, next) => {
     req.headers.authorization.startsWith("Bearer")
   ) {
     [, tokenFromRequest] = req.headers.authorization.split(" ");
+  } else if (req.cookies.jwt) {
+    tokenFromRequest = req.cookies.jwt;
+    console.log(`Token from the cookie: ${tokenFromRequest}`);
   } else {
     return next(new JsonWebTokenError("Missing token"));
   }
