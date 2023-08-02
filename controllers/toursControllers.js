@@ -43,42 +43,6 @@ const getAllToursStats = async (req, res) => {
       { $match: { ratingAverage: { $gte: 0 } } },
       {
         $group: {
-          /* If we add _id: difficutly, it will group them based on the difficulty
-          with all the different stats included. ID is what we use to decide which
-          field to aggregate upon and it goes through each document and adds up.
-          For instance, we can observe that the ratings for the easiest tours are
-          the lowest and the highest
-          and for the medium are the best ratings. So we can use it to get statistics for the tours
-          example :
-           _id: "$difficulty",
-           {
-            "_id": "difficult",
-            "totalTours": 2,
-            "totalRatings": 12,
-            "avgRating": 2.5,
-            "avgPrice": 1997,
-            "minPrice": 997,
-            "maxPrice": 2997
-        },
-        {
-            "_id": "easy",
-            "totalTours": 4,
-            "totalRatings": 3,
-            "avgRating": 1.75,
-            "avgPrice": 1272,
-            "minPrice": 397,
-            "maxPrice": 1997
-        },
-        {
-            "_id": "medium",
-            "totalTours": 3,
-            "totalRatings": 2,
-            "avgRating": 2,
-            "avgPrice": 1663.6666666666667,
-            "minPrice": 497,
-            "maxPrice": 2997
-        }
-          */
           _id: null,
           totalTours: { $sum: 1 },
           totalRatings: { $sum: "$ratingQuantity" },
@@ -99,16 +63,57 @@ const getAllToursStats = async (req, res) => {
       },
     ]);
 
-    res.json({
-      status: StatusCodes.OK,
-      data: allToursStats,
-    });
+    // ? Sending the HTTP response with the found tours stats
+    createHttpResponse(
+      res,
+      StatusCodes.OK,
+      "Success",
+      "All tour stats aggregated successfully",
+      allToursStats
+    );
   } catch (error) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      status: StatusCodes.INTERNAL_SERVER_ERROR,
-      message:
-        "Something went wrong trying to get tours stats. Please try again later.",
-    });
+    // ? Sending the HTTP response with the found tours
+    createHttpResponse(
+      res,
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      "Failed",
+      "Something went wrong trying to get tours stats. Please try again later."
+    );
+  }
+};
+
+const getAllToursUniqueDestinations = async (req, res) => {
+  try {
+    const destinations = await Tour.aggregate([
+      {
+        $group: {
+          _id: "$startLocation", // Group by the startLocation field
+          imageCover: { $first: "$imageCover" }, // Get the first imageCover for each group
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          destination: "$_id", // Rename _id to destination
+          imageCover: 1, // Include the imageCover field in the output
+        },
+      },
+    ]);
+
+    createHttpResponse(
+      res,
+      StatusCodes.OK,
+      "Success",
+      "All tour stats aggregated successfully",
+      destinations
+    );
+  } catch (error) {
+    createHttpResponse(
+      res,
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      "Error",
+      "Something went wrong trying to get tour destinations. Please try again later."
+    );
   }
 };
 
@@ -256,4 +261,5 @@ module.exports = {
   getMonthlyStats,
   getToursWithin,
   getTourDistances,
+  getAllToursUniqueDestinations,
 };

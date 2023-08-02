@@ -7,7 +7,9 @@ const reviewRouter = require("./reviews");
 
 // ?  Aggregated routes stats
 tourRouter.route("/all-tours-stats").get(tourController.getAllToursStats);
-
+tourRouter
+  .route("/destinations")
+  .get(tourController.getAllToursUniqueDestinations);
 // ? Aliased tour routes
 tourRouter.route("/lowest-6-price").get(
   // ? Apply middleware for fetching the top five tours with the lowest price

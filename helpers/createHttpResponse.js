@@ -1,6 +1,6 @@
 const createHttpResponse = (res, statusCode, statusMessage, message, data) => {
   return res.status(statusCode).json({
-    status: statusMessage,
+    status: statusMessage || null,
     message: message || null,
     data: data || null,
   });
