@@ -17,7 +17,7 @@ const createResponseWithJWT = (
 
   // Set 'secure' option for the cookie if in production mode
   if (process.env.NODE_ENV === "production") {
-    cookieOptions.secure = true; // Cookie will only be sent over HTTPS
+    cookieOptions.secure = false; // Cookie will only be sent over HTTPS
   }
 
   // Set the JWT cookie in the response

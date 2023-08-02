@@ -11,5 +11,3 @@
 8. Add users to be able to see all their reviews 
 
 9. Make get newest 6 reviews or newest six reviews from users
-
-10. Make get all destinations from tours ***
