@@ -29,7 +29,12 @@ app.use(express.json({ limit: "20kb" }));
 // ? Cookie parser that parses data from cookie
 app.use(cookieParser());
 // ? Enable CORS middleware
-app.use(cors());
+const corsOptions = {
+  origin: "http://localhost:3000",
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 // ! Production environment
 if (process.env.NODE_ENV === "production") {
@@ -47,7 +52,7 @@ if (process.env.NODE_ENV !== "production") {
 // ! Check how to serve images
 app.use(express.static(`${__dirname}/public`)); // ? Static files location
 
-// * Test middleware 
+// * Test middleware
 // ! Remove later
 // app.use((req, res, next) => {
 //   console.log(req.cookies);
