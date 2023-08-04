@@ -29,12 +29,13 @@ app.use(express.json({ limit: "20kb" }));
 // ? Cookie parser that parses data from cookie
 app.use(cookieParser());
 // ? Enable CORS middleware
-const corsOptions = {
-  origin: "http://localhost:3000",
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
+// ! Change origin later
+app.use(
+  cors({
+    credentials: true,
+    origin: "http://localhost:3000",
+  })
+);
 
 // ! Production environment
 if (process.env.NODE_ENV === "production") {
@@ -69,8 +70,19 @@ app.use("/api/v1/admin", adminRouter);
 // * The starting API call for GET /
 app.get("/", (req, res) => {
   res.send(
-    "Welcome to my meet japan api. You can view the documentation here: https://documenter.getpostman.com/view/25275561/2s93z9bhMZ#intro"
+    "Welcome to meet japan api. You can view the documentation here: https://documenter.getpostman.com/view/25275561/2s93z9bhMZ#intro"
   );
+});
+
+app.get("/set-cookies", (req, res) => {
+  res.cookie("isEmployee", true, {
+    maxAge: 1000 * 60 * 60 * 24,
+    httpOnly: true,
+    // sameSite: "None",
+    // secure: true,
+  });
+
+  res.send("you got the cookies!");
 });
 // * Unknown endpoint
 app.all("*", unknownEndpointHandler);

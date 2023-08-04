@@ -25,7 +25,6 @@ const registerUser = async (req, res) => {
 // ? Login existing user
 const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
-
   // Check if email or password is missing
   if (!email || !password) {
     return next(new BadRequestError("Please provide email and password."));
@@ -41,14 +40,48 @@ const loginUser = async (req, res, next) => {
   }
 
   // If email and password are correct, create a JWT token for the user
+  // If email and password are correct, create a JWT token for the user
+  const jwtToken = user.createToken();
+
   // Return success response with the JWT token
-  createResponseWithJWT(
-    res,
-    StatusCodes.CREATED,
-    "success",
-    user.createToken(),
-    `Welcome back ${user.name}`
-  );
+
+  // Define cookie options
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ), // Cookie expiration date
+    httpOnly: true, // Cookie cannot be accessed by JavaScript/browser on the client side
+  };
+
+  // Set the JWT cookie in the response
+  res.cookie("jwt_cookie", jwtToken, cookieOptions);
+
+  // Set 'secure' option for the cookie if in production mode
+  // ! put back to secure before  prod
+  if (process.env.NODE_ENV === "production") {
+    cookieOptions.secure = false; // Cookie will only be sent over HTTPS
+  }
+
+  // Set the JWT cookie in the response
+
+  // Set the HTTP status code and send the JSON response
+
+  // res.cookie("jwtCookie", "dummydataaasdasfahsfdf", {
+  //   httpOnly: true,
+  //   maxAge: 60 * 60 * 3 * 1000,
+  //   path: "/",
+  //   secure: true,
+  //   sameSite: "None",
+  // });
+
+  res.send(user);
+  // createResponseWithJWT(
+  //   res,
+  //   StatusCodes.CREATED,
+  //   "success",
+  //   user.createToken(),
+  //   `Welcome back ${user.name}`
+  // );
 };
 
 // ? Forgot existing user password

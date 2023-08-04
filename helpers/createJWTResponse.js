@@ -12,8 +12,7 @@ const createResponseWithJWT = (
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ), // Cookie expiration date
-    httpOnly: false, // Cookie cannot be accessed by JavaScript/browser on the client side
-    sameSite: "None", // Set the SameSite attribute to "None"
+    httpOnly: true, // Cookie cannot be accessed by JavaScript/browser on the client side
   };
 
   // Set 'secure' option for the cookie if in production mode
