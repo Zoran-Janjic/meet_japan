@@ -41,6 +41,7 @@ const protectedRoute = async (req, res, next) => {
     [, tokenFromRequest] = req.headers.authorization.split(" ");
   } else if (req.cookies.jwt_cookie) {
     tokenFromRequest = req.cookies.jwt_cookie;
+    console.log("TOKEN FROM REQUEST: ", tokenFromRequest);
   } else {
     return next(new JsonWebTokenError("Missing token"));
   }

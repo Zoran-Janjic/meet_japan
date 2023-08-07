@@ -29,7 +29,7 @@ app.use(express.json({ limit: "20kb" }));
 // ? Cookie parser that parses data from cookie
 app.use(cookieParser());
 // ? Enable CORS middleware
-// ! Change origin later
+// ! Change origin later to frontend url
 app.use(
   cors({
     credentials: true,
@@ -74,16 +74,6 @@ app.get("/", (req, res) => {
   );
 });
 
-app.get("/set-cookies", (req, res) => {
-  res.cookie("isEmployee", true, {
-    maxAge: 1000 * 60 * 60 * 24,
-    httpOnly: true,
-    // sameSite: "None",
-    // secure: true,
-  });
-
-  res.send("you got the cookies!");
-});
 // * Unknown endpoint
 app.all("*", unknownEndpointHandler);
 // * This has to be the last loaded middleware. So it can catch all errors

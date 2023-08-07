@@ -21,67 +21,59 @@ const registerUser = async (req, res) => {
     newUser
   );
 };
-
-// ? Login existing user
+// Login existing user
 const loginUser = async (req, res, next) => {
-  const { email, password } = req.body;
-  // Check if email or password is missing
-  if (!email || !password) {
-    return next(new BadRequestError("Please provide email and password."));
+  try {
+    const { email, password } = req.body;
+
+    // Check if email or password is missing
+    if (!email || !password) {
+      return next(new BadRequestError("Please provide email and password."));
+    }
+
+    // Find user with matching email and include password field in the result
+    const user = await User.findOne({ email }).select("+password");
+
+    // Check if user with the provided email exists and if the password is correct
+    if (!user || !(await user.checkPassword(password))) {
+      // If the email or password is incorrect, return an unauthenticated error
+      return next(new CustomAPIError("Invalid email or password.", 401));
+    }
+
+    // If email and password are correct, create a JWT token for the user
+    const jwtToken = user.createToken();
+
+    // Define cookie options
+    const cookieOptions = {
+      expires: new Date(Date.now() + 3 * 60 * 60 * 1000), // Cookie expiration after 3 hours
+      httpOnly: true, // Cookie cannot be accessed by JavaScript/browser on the client side
+      secure: true, // Only send the cookie over HTTPS (recommended for production)
+      sameSite: "strict", // Set same-site policy to Strict for cross-site cookies
+    };
+
+    // Set 'secure' option for the cookie if in production mode
+    // ! Ensure this is set to 'true' before deploying to production
+    if (process.env.NODE_ENV === "production") {
+      cookieOptions.secure = false; // Cookie will only be sent over HTTPS
+    }
+
+    // Set the JWT cookie in the response
+    res.cookie("jwt_cookie", jwtToken, cookieOptions);
+
+    // Return success response with user details (omit password for security)
+    res.status(StatusCodes.OK).json({
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        avatar: user.photo,
+      },
+    });
+  } catch (error) {
+    next(error); // Pass the error to the error-handling middleware
   }
-
-  // Find user with matching email and include password field in the result
-  const user = await User.findOne({ email }).select("+password");
-
-  // Check if user with the provided email exists and if the password is correct
-  if (!user || !(await user.checkPassword(password))) {
-    // If the email or password is incorrect, return an unauthenticated error
-    return next(new CustomAPIError("Invalid email or password.", 401));
-  }
-
-  // If email and password are correct, create a JWT token for the user
-  // If email and password are correct, create a JWT token for the user
-  const jwtToken = user.createToken();
-
-  // Return success response with the JWT token
-
-  // Define cookie options
-  const cookieOptions = {
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-    ), // Cookie expiration date
-    httpOnly: true, // Cookie cannot be accessed by JavaScript/browser on the client side
-  };
-
-  // Set the JWT cookie in the response
-  res.cookie("jwt_cookie", jwtToken, cookieOptions);
-
-  // Set 'secure' option for the cookie if in production mode
-  // ! put back to secure before  prod
-  if (process.env.NODE_ENV === "production") {
-    cookieOptions.secure = false; // Cookie will only be sent over HTTPS
-  }
-
-  // Set the JWT cookie in the response
-
-  // Set the HTTP status code and send the JSON response
-
-  // res.cookie("jwtCookie", "dummydataaasdasfahsfdf", {
-  //   httpOnly: true,
-  //   maxAge: 60 * 60 * 3 * 1000,
-  //   path: "/",
-  //   secure: true,
-  //   sameSite: "None",
-  // });
-
-  res.send(user);
-  // createResponseWithJWT(
-  //   res,
-  //   StatusCodes.CREATED,
-  //   "success",
-  //   user.createToken(),
-  //   `Welcome back ${user.name}`
-  // );
 };
 
 // ? Forgot existing user password
