@@ -32,10 +32,15 @@ app.use(cookieParser());
 // ! Change origin later to frontend url
 app.use(
   cors({
+    origin: [
+      "http://localhost:3000", // update the origin value to match the actual domain where your frontend application will be hosted
+      "http://127.0.0.1",
+      // your origins here
+    ],
     credentials: true,
-    origin: "http://localhost:3000",
   })
 );
+app.set("trust proxy", 1); // trust first proxy
 
 // ! Production environment
 if (process.env.NODE_ENV === "production") {
@@ -53,12 +58,6 @@ if (process.env.NODE_ENV !== "production") {
 // ! Check how to serve images
 app.use(express.static(`${__dirname}/public`)); // ? Static files location
 
-// * Test middleware
-// ! Remove later
-// app.use((req, res, next) => {
-//   console.log(req.cookies);
-//   next();
-// });
 // * End of middleware
 
 //  * Routers mounting
@@ -72,6 +71,27 @@ app.get("/", (req, res) => {
   res.send(
     "Welcome to meet japan api. You can view the documentation here: https://documenter.getpostman.com/view/25275561/2s93z9bhMZ#intro"
   );
+});
+
+// !
+app.post("/api/v1/add", async (req, res) => {
+  try {
+    req.session.name = "zoran";
+    console.log(req.session);
+    res.send({ message: "SAVED" }).status(201);
+  } catch (error) {
+    console.log("ERROR IN ADD", error);
+  }
+});
+app.get("/api/v1/get", async (req, res) => {
+  console.log(req.session);
+
+  try {
+    console.log(req.session.name);
+    res.send({ message: req.session.name });
+  } catch (error) {
+    console.log("ERROR IN GET", error);
+  }
 });
 
 // * Unknown endpoint

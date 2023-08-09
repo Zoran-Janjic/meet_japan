@@ -43,22 +43,22 @@ const loginUser = async (req, res, next) => {
     // If email and password are correct, create a JWT token for the user
     const jwtToken = user.createToken();
 
-    // Define cookie options
     const cookieOptions = {
-      expires: new Date(Date.now() + 3 * 60 * 60 * 1000), // Cookie expiration after 3 hours
-      httpOnly: true, // Cookie cannot be accessed by JavaScript/browser on the client side
-      secure: true, // Only send the cookie over HTTPS (recommended for production)
-      sameSite: "strict", // Set same-site policy to Strict for cross-site cookies
+      maxAge: 3 * 60 * 60 * 1000, // Set the maxAge in milliseconds,
+      sameSite: "lax",
+      httpOnly: true,
+      secure: false,
     };
 
     // Set 'secure' option for the cookie if in production mode
     // ! Ensure this is set to 'true' before deploying to production
     if (process.env.NODE_ENV === "production") {
-      cookieOptions.secure = false; // Cookie will only be sent over HTTPS
+      console.log("PRODUCTION MODE");
+      cookieOptions.secure = true; // Cookie will only be sent over HTTPS
+      cookieOptions.sameSite = "none"; // Cookie will be sent for cross-site requests
     }
-
     // Set the JWT cookie in the response
-    res.cookie("jwt_cookie", jwtToken, cookieOptions);
+    res.cookie("meet_japan_jwt", jwtToken, cookieOptions);
 
     // Return success response with user details (omit password for security)
     res.status(StatusCodes.OK).json({

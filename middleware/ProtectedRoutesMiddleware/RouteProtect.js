@@ -33,14 +33,14 @@ const protectedRoute = async (req, res, next) => {
   let tokenFromRequest;
   let decodedToken;
   // * Step1: Check if token is present with the request
-  console.log("COOKIE: ", req.cookies.jwt_cookie);
+  console.log("COOKIE IS: ", req.cookies.meet_japan_jwt);
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
   ) {
     [, tokenFromRequest] = req.headers.authorization.split(" ");
-  } else if (req.cookies.jwt_cookie) {
-    tokenFromRequest = req.cookies.jwt_cookie;
+  } else if (req.cookies.meet_japan_jwt) {
+    tokenFromRequest = req.cookies.meet_japan_jwt;
     console.log("TOKEN FROM REQUEST: ", tokenFromRequest);
   } else {
     return next(new JsonWebTokenError("Missing token"));
