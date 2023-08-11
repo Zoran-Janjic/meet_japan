@@ -55,7 +55,6 @@ const loginUser = async (req, res, next) => {
     if (process.env.NODE_ENV === "production") {
       cookieOptions.secure = true; // Cookie will only be sent over HTTPS
       cookieOptions.sameSite = "none"; // Cookie will be sent for cross-site requests
-      console.log("PRODUCTION MODE", cookieOptions);
     }
     // Set the JWT cookie in the response
     res.cookie("meet_japan_jwt", jwtToken, cookieOptions);
