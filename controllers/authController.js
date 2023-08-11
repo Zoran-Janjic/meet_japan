@@ -45,7 +45,7 @@ const loginUser = async (req, res, next) => {
 
     const cookieOptions = {
       maxAge: 3 * 60 * 60 * 1000, // Set the maxAge in milliseconds,
-      sameSite: "lax",
+      sameSite: "none",
       httpOnly: true,
       secure: false,
     };
@@ -53,9 +53,9 @@ const loginUser = async (req, res, next) => {
     // Set 'secure' option for the cookie if in production mode
     // ! Ensure this is set to 'true' before deploying to production
     if (process.env.NODE_ENV === "production") {
-      console.log("PRODUCTION MODE");
       cookieOptions.secure = true; // Cookie will only be sent over HTTPS
       cookieOptions.sameSite = "none"; // Cookie will be sent for cross-site requests
+      console.log("PRODUCTION MODE", cookieOptions);
     }
     // Set the JWT cookie in the response
     res.cookie("meet_japan_jwt", jwtToken, cookieOptions);
