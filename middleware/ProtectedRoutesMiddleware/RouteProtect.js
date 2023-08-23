@@ -29,6 +29,7 @@ Authorization header when making requests to protected API endpoints.
 This approach follows the standard way of API authentication
 using the Authorization header with the Bearer scheme.
 */
+
 const protectedRoute = async (req, res, next) => {
   let tokenFromRequest;
   let decodedToken;

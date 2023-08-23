@@ -8,18 +8,45 @@ const createHttpResponse = require("../helpers/createHttpResponse");
 const createResponseWithJWT = require("../helpers/createJWTResponse");
 // ? Add special route for adding admin privilege
 
+// ! check cookie for register is being sent
 // ? Register new user
-const registerUser = async (req, res) => {
+const registerUser = async (req, res, next) => {
   const newUser = await User.create(req.body);
   newUser.password = undefined;
-  createResponseWithJWT(
-    res,
-    StatusCodes.CREATED,
-    "success",
-    newUser.createToken(),
-    "Account created successfully",
-    newUser
-  );
+
+  try {
+    // If email and password are correct, create a JWT token for the user
+    const jwtToken = newUser.createToken();
+
+    const cookieOptions = {
+      maxAge: 3 * 60 * 60 * 1000, // Set the maxAge in milliseconds,
+      sameSite: "none",
+      httpOnly: true,
+      secure: false,
+    };
+
+    // Set 'secure' option for the cookie if in production mode
+    // ! Ensure this is set to 'true' before deploying to production
+    if (process.env.NODE_ENV === "production") {
+      cookieOptions.secure = true; // Cookie will only be sent over HTTPS
+      cookieOptions.sameSite = "none"; // Cookie will be sent for cross-site requests
+    }
+    // Set the JWT cookie in the response
+    res.cookie("meet_japan_jwt", jwtToken, cookieOptions);
+    // Return success response with user details (omit password for security)
+    res.status(StatusCodes.CREATED).json({
+      success: true,
+      user: {
+        id: newUser.id,
+        email: newUser.email,
+        name: newUser.name,
+        role: newUser.role,
+        avatar: newUser.photo,
+      },
+    });
+  } catch (error) {
+    next(error); // Pass the error to the error-handling middleware
+  }
 };
 // Login existing user
 const loginUser = async (req, res, next) => {
