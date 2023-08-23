@@ -87,6 +87,8 @@ const loginUser = async (req, res, next) => {
     res.cookie("meet_japan_jwt", jwtToken, cookieOptions);
 
     // Return success response with user details (omit password for security)
+    console.log("USER EGISTERED");
+    console.log(res.cookie);
     res.status(StatusCodes.OK).json({
       success: true,
       user: {
