@@ -29,12 +29,13 @@ app.use(express.json({ limit: "20kb" }));
 // ? Cookie parser that parses data from cookie
 app.use(cookieParser());
 // ? Enable CORS middleware
-// ! Change origin later to frontend url
 app.use(
   cors({
     origin: [
+      // ? LOCAL TESTING
       "http://localhost:3000", // update the origin value to match the actual domain where your frontend application will be hosted
       "http://127.0.0.1",
+      // ? ONLINE TESTING
       "https://meet-japan-frontend-dev.onrender.com",
       // your origins here
     ],
