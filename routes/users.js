@@ -9,8 +9,6 @@ userRouter
   .route("/tourGuides/topSixTourGuides")
   .get(usersController.getTopSixTourGuides);
 
-module.exports = userRouter; // ? Export the router object for use in other modules
-
 // ? All endpoints middleware
 // ? Apply protectedRoute middleware for authentication
 userRouter.use(applicationMiddleware.RouteProtect.protectedRoute);
@@ -40,3 +38,5 @@ userRouter.route("/:id").get(
 // ? Tour guides routes
 
 userRouter.route("/tourguide/:id").get(usersController.getTourGuideUser);
+
+module.exports = userRouter; // ? Export the router object for use in other modules
