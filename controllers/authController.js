@@ -88,6 +88,7 @@ const loginUser = async (req, res, next) => {
 
     res.status(StatusCodes.OK).json({
       success: true,
+      jwt_token: jwtToken,
       user: {
         id: user.id,
         email: user.email,

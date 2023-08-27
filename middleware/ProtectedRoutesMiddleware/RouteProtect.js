@@ -33,6 +33,7 @@ using the Authorization header with the Bearer scheme.
 const protectedRoute = async (req, res, next) => {
   let tokenFromRequest;
   let decodedToken;
+
   // * Step1: Check if token is present with the request
   if (
     req.headers.authorization &&
