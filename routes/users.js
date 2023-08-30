@@ -20,7 +20,6 @@ userRouter
     usersController.updateUser // ? Handle user update logic
   )
   .delete(
-    applicationMiddleware.CurrentUserIdMiddleware.getCurrentUserDetails,
     usersController.deleteSelfUser // ? Handle user deletion logic
   );
 

@@ -33,13 +33,7 @@ using the Authorization header with the Bearer scheme.
 const protectedRoute = async (req, res, next) => {
   let tokenFromRequest;
   let decodedToken;
-  console.log("THE protectedRoute");
-  console.log(
-    "request is ",
-    req.headers.authorization,
-    "cookie is: ",
-    req.cookies.meet_japan_jwt
-  );
+
   // * Step1: Check if token is present with the request
   if (
     req.headers.authorization &&
@@ -48,7 +42,6 @@ const protectedRoute = async (req, res, next) => {
     [, tokenFromRequest] = req.headers.authorization.split(" ");
   } else if (req.cookies.meet_japan_jwt) {
     tokenFromRequest = req.cookies.meet_japan_jwt;
-    console.log("COOKIE: ", tokenFromRequest);
   } else {
     return next(new JsonWebTokenError("Missing token"));
   }
