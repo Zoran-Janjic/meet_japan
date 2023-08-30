@@ -26,6 +26,7 @@ const cookieParser = require("cookie-parser");
 
 // ? Body parser, reading data from request body to req.body and limit payload to 10kb
 app.use(express.json({ limit: "20kb" }));
+app.use(express.urlencoded({ extended: true }));
 // ? Cookie parser that parses data from cookie
 app.use(cookieParser());
 // ? Enable CORS middleware

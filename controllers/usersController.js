@@ -72,7 +72,7 @@ const deleteSelfUser = async (req, res) => {
   const foundUser = await User.findByIdAndUpdate(req.user.id, {
     active: false,
   });
-
+  console.log("im here", foundUser);
   // ? Create an HTTP response with success status and a message confirming the deletion
   helpers.createHttpResponse(
     res,
