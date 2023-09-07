@@ -3,7 +3,7 @@ const userRouter = express.Router(); // ? Create a router object
 const usersController = require("../controllers/usersController"); // ? Import usersController module
 const applicationMiddleware = require("../middleware/index"); // ? Import middleware module
 
-// ? Agregated tourguide routes which are not protected
+// ? Aggregated tour guide routes which are not protected
 
 userRouter
   .route("/tourGuides/topSixTourGuides")
