@@ -3,7 +3,7 @@ const createResponseWithJWT = (
   res, // Response object from the Express framework
   statusCode, // HTTP status code for the response
   statusMessage, // Status message for the response
-  token, // JWT token to be included in the response and cookie
+  jwtToken, // JWT token to be included in the response and cookie
   message, // Optional message to be included in the response
   data // Optional data to be included in the response
 ) => {
@@ -22,14 +22,14 @@ const createResponseWithJWT = (
   }
 
   // Set the JWT cookie in the response
-  res.cookie("jwt", token, cookieOptions);
+  res.cookie("jwt", jwtToken, cookieOptions);
 
   // Set the HTTP status code and send the JSON response
   res.status(statusCode).json({
     status: statusMessage, // Status message of the response
     message: message || null, // Optional message, defaulting to null if not provided
     data: data || null, // Optional data, defaulting to null if not provided
-    token, // JWT token included in the response
+    jwtToken, // JWT token included in the response
   });
 };
 
