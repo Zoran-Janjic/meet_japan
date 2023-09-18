@@ -16,7 +16,7 @@ const getUser = ControllerHandlerFactory.getDocument(
 const getTourGuideUser = ControllerHandlerFactory.getDocument(
   User,
   DatabaseOperationsConstants.GET_DOCUMENT_BY_ID,
-  { path: "tourGuideUserReviews " }
+  { path: "tourGuideUserReviews" }
 );
 
 // ? Update user details for only updating the data which is not the password
