@@ -38,5 +38,4 @@ userRouter.route("/:id").get(
 // ? Tour guides routes
 
 userRouter.route("/tourguide/:id").get(usersController.getTourGuideUser);
-
 module.exports = userRouter; // ? Export the router object for use in other modules

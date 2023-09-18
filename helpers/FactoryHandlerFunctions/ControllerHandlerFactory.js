@@ -31,6 +31,7 @@ const deleteOneDocument = (Model, actionType) => async (req, res) => {
 };
 
 const updateDocument = (Model, actionType) => async (req, res) => {
+  console.log("UPDATE TOUR");
   if (Object.keys(req.body).length !== 0) {
     const updatedDocument = await Model[actionType](req.params.id, req.body, {
       new: true,
@@ -64,6 +65,7 @@ const updateDocument = (Model, actionType) => async (req, res) => {
 };
 
 const createDocument = (Model, actionType) => async (req, res) => {
+  console.log("here", req.body);
   const newDocument = await Model[actionType](req.body);
 
   if (newDocument) {

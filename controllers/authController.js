@@ -26,7 +26,6 @@ const registerUser = async (req, res, next) => {
     };
 
     // Set 'secure' option for the cookie if in production mode
-    // ! Ensure this is set to 'true' before deploying to production
     if (process.env.NODE_ENV === "production") {
       cookieOptions.secure = true; // Cookie will only be sent over HTTPS
       cookieOptions.sameSite = "none"; // Cookie will be sent for cross-site requests
