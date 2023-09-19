@@ -65,7 +65,6 @@ const updateDocument = (Model, actionType) => async (req, res) => {
 };
 
 const createDocument = (Model, actionType) => async (req, res) => {
-  console.log("here", req.body);
   const newDocument = await Model[actionType](req.body);
 
   if (newDocument) {

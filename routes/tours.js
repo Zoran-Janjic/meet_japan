@@ -80,6 +80,8 @@ tourRouter
     applicationMiddleware.RoleRestrictedRoute.restrictTo("admin", "tourguide"), // ? Apply middleware for restricting access based on user roles
     tourController.deleteTour // ? Delete a specific tour by ID
   );
+
+tourRouter.route("/:id/allTours").post(tourController.getAllToursFromTourGuide);
 // ? Nested routes
 // ? Use the review router for the specific route
 tourRouter.use("/:tourId/reviews", reviewRouter);

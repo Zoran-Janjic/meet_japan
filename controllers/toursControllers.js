@@ -31,6 +31,30 @@ const deleteTour = ControllerHandlerFactory.deleteOneDocument(
   DatabaseOperationsConstants.DELETE_SINGLE_DOCUMENT_BY_ID
 );
 
+const getAllToursFromTourGuide = async (req, res) => {
+  try {
+    // Use a regular find query to retrieve tours for the specified tour guide
+    const tours = await Tour.find({ guides: req.params.id });
+
+    // Sending the HTTP response with the found tours
+    createHttpResponse(
+      res,
+      StatusCodes.OK,
+      "Success",
+      "All tour stats aggregated successfully",
+      tours
+    );
+  } catch (error) {
+    // Handle any errors that may occur
+    createHttpResponse(
+      res,
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      "Failed",
+      "An error occurred while fetching tour guides tours."
+    );
+  }
+};
+
 // * Aggregated routes
 const getAllToursStats = async (req, res) => {
   /*
@@ -262,4 +286,5 @@ module.exports = {
   getToursWithin,
   getTourDistances,
   getAllToursUniqueDestinations,
+  getAllToursFromTourGuide,
 };
