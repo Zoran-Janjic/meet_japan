@@ -16,7 +16,6 @@ process.on("uncaughtException", (err) => {
 Connect to db and than start the server if connection is established
 The following code assumes you have the necessary environment variables defined before running it.
 Create a new instance of DBConnectionClass with the provided URI and password
-
 */
 
 const DatabaseConnection = new DBConnectionClass(

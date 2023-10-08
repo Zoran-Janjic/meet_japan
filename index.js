@@ -52,6 +52,8 @@ if (process.env.NODE_ENV === "production") {
   app.use(security.userDataSanitizer());
   app.use(security.xssSanitizer());
   app.use(security.preventParameterPollution());
+  // ! Remove later for production and use only for development
+  app.use(Logger.requestLogger);
 }
 // ! Any middleware needed for development only
 if (process.env.NODE_ENV !== "production") {
