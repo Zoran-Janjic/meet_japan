@@ -81,7 +81,16 @@ tourRouter
     tourController.deleteTour // ? Delete a specific tour by ID
   );
 
+// ? Tour images routes
+
 tourRouter.route("/:id/allTours").post(tourController.getAllToursFromTourGuide);
+tourRouter.route("/tour/:tourId/image/:tourImageIndex").delete(
+  // applicationMiddleware.RouteProtect.protectedRoute, // ? Apply middleware for route protection
+  // applicationMiddleware.RoleRestrictedRoute.restrictTo("admin", "tourguide"),
+  // ? Apply middleware for restricting access based on user roles
+  tourController.deleteTourImage // ? Delete a specific tour image by url
+);
+
 // ? Nested routes
 // ? Use the review router for the specific route
 tourRouter.use("/:tourId/reviews", reviewRouter);

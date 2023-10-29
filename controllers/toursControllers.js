@@ -31,6 +31,41 @@ const deleteTour = ControllerHandlerFactory.deleteOneDocument(
   DatabaseOperationsConstants.DELETE_SINGLE_DOCUMENT_BY_ID
 );
 
+const deleteTourImage = async (req, res) => {
+  try {
+    const { tourId, tourImageIndex } = req.params;
+    // Find the tour by ID
+    const tour = await Tour.findById(tourId);
+    // Check if the tour exists
+    if (!tour) {
+      createHttpResponse(
+        res,
+        StatusCodes.NOT_FOUND,
+        "Failed",
+        "Tour not found."
+      );
+    }
+    // Remove the image from the images array
+    tour.images = tour.images.filter(
+      (_, index) => index !== Number(tourImageIndex)
+    );
+
+    // Save the updated tour
+    await tour.save();
+
+    createHttpResponse(
+      res,
+      StatusCodes.OK,
+      "Success",
+      "Image deleted successfully",
+      tour
+    );
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 const getAllToursFromTourGuide = async (req, res) => {
   try {
     // Use a regular find query to retrieve tours for the specified tour guide
@@ -287,4 +322,5 @@ module.exports = {
   getTourDistances,
   getAllToursUniqueDestinations,
   getAllToursFromTourGuide,
+  deleteTourImage,
 };
