@@ -82,11 +82,13 @@ tourRouter
   );
 
 // ? Tour images routes
+tourRouter.route("/:id/TourImages").post(tourController.addNewImagesToTour);
 
 tourRouter.route("/:id/allTours").post(tourController.getAllToursFromTourGuide);
+
 tourRouter.route("/tour/:tourId/image/:tourImageIndex").delete(
-  // applicationMiddleware.RouteProtect.protectedRoute, // ? Apply middleware for route protection
-  // applicationMiddleware.RoleRestrictedRoute.restrictTo("admin", "tourguide"),
+  applicationMiddleware.RouteProtect.protectedRoute, // ? Apply middleware for route protection
+  applicationMiddleware.RoleRestrictedRoute.restrictTo("admin", "tourguide"),
   // ? Apply middleware for restricting access based on user roles
   tourController.deleteTourImage // ? Delete a specific tour image by url
 );

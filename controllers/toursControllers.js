@@ -4,6 +4,8 @@ const ControllerHandlerFactory = require("../helpers/FactoryHandlerFunctions/Con
 const DatabaseOperationsConstants = require("../helpers/Constants/DatabaseOperationsConstants");
 const BadRequestError = require("../errors/index");
 const createHttpResponse = require("../helpers/createHttpResponse");
+const toursControllerHelper = require("../helpers/tours_controller_helper");
+
 // * Route handlers
 const getTours = ControllerHandlerFactory.getAllDocuments(
   Tour,
@@ -36,15 +38,28 @@ const deleteTourImage = async (req, res) => {
     const { tourId, tourImageIndex } = req.params;
     // Find the tour by ID
     const tour = await Tour.findById(tourId);
+
     // Check if the tour exists
     if (!tour) {
-      createHttpResponse(
+      return createHttpResponse(
         res,
         StatusCodes.NOT_FOUND,
         "Failed",
-        "Tour not found."
+        "Tour not found.",
+        null
       );
     }
+
+    if (!toursControllerHelper.isUserGuide(tour, req.user.id)) {
+      return createHttpResponse(
+        res,
+        StatusCodes.UNAUTHORIZED,
+        "Failed",
+        "You are not authorized to perform this action.",
+        null
+      );
+    }
+
     // Remove the image from the images array
     tour.images = tour.images.filter(
       (_, index) => index !== Number(tourImageIndex)
@@ -61,8 +76,49 @@ const deleteTourImage = async (req, res) => {
       tour
     );
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    res
+      .status(500)
+      .json({ message: "Internal server error. Delete tour image." });
+  }
+};
+
+const addNewImagesToTour = async (req, res) => {
+  try {
+    const tour = await Tour.findById(req.params.id);
+
+    if (!tour) {
+      return createHttpResponse(
+        res,
+        StatusCodes.NOT_FOUND,
+        "Failed",
+        "Tour not found for the specified tour ID."
+      );
+    }
+
+    const newImages = req.body.uploadedImageUrls;
+
+    // Add the new image URLs to the existing images array
+    tour.images = tour.images.concat(newImages);
+
+    // Save the updated tour with the new images
+    await tour.save();
+
+    // Sending the HTTP response with the found tours
+    createHttpResponse(
+      res,
+      StatusCodes.OK,
+      "Success",
+      "Images uploaded successfully",
+      tour
+    );
+  } catch (error) {
+    // Handle any errors that may occur
+    createHttpResponse(
+      res,
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      "Failed",
+      "An error occurred while fetching tour guides tours."
+    );
   }
 };
 
@@ -323,4 +379,5 @@ module.exports = {
   getAllToursUniqueDestinations,
   getAllToursFromTourGuide,
   deleteTourImage,
+  addNewImagesToTour,
 };
