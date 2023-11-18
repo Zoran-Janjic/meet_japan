@@ -1,9 +1,9 @@
 const filterUpdateUserObject = require("./removeFieldsFromUpdateUserObject");
-const sendEmail = require("./sendEmail");
+const EmailHandler = require("./EmailHandler");
 const createHttpResponse = require("./createHttpResponse");
 
 module.exports = {
   filterUpdateUserObject,
-  sendEmail,
+  EmailHandler,
   createHttpResponse,
 };

@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, CustomAPIError } = require("../errors");
-const sendEmail = require("../helpers/sendEmail");
+const EmailHandler = require("../helpers/EmailHandler");
 const crypto = require("crypto");
 // const helpers = require("../helpers");
 const createHttpResponse = require("../helpers/createHttpResponse");
@@ -32,6 +32,10 @@ const registerUser = async (req, res, next) => {
     }
     // Set the JWT cookie in the response
     res.cookie("meet_japan_jwt", jwtToken, cookieOptions);
+
+    // Send welcome email to the user
+    await new EmailHandler(newUser).sendNewUserWelcome(newUser.name);
+
     // Return success response with user details (omit password for security)
     res.status(StatusCodes.CREATED).json({
       success: true,
@@ -117,25 +121,27 @@ const forgotPassword = async (req, res, next) => {
   }
 
   // If user found generate reset token
-  const resetToken = user.createPasswordResetToken();
+  // const resetToken = user.createPasswordResetToken();
 
   // We need to save it so we save the reset token to the user
   await user.save({ validateBeforeSave: false });
 
   //  Send the plain text token to the user
-  const resetUrlForUser = `${req.protocol}://${req.get(
-    "host"
-  )}/api/v1/auth/resetPassword/${resetToken}`;
+  // const resetUrlForUser = `${req.protocol}://${req.get(
+  //   "host"
+  // )}/api/v1/auth/resetPassword/${resetToken}`;
 
-  const userEmailMessage = `Did you forget your password? You can generate a new one by clicking the following link: ${resetUrlForUser}.\nIf you didn't initiate this request, we advise you to reset your password to a more secure one.`;
+  // const userEmailMessage = `Did you forget your password? You can generate a new
+  //  one by clicking the following link: ${resetUrlForUser}.\nIf you didn't initiate
+  //  this request, we advise you to reset your password to a more secure one.`;
 
   try {
-    await sendEmail({
-      emailAddress: user.email,
-      emailSubject:
-        "Password reset token from Meet Japan.Valid for 10 minutes.",
-      emailText: userEmailMessage,
-    });
+    //   await sendEmail({
+    //     emailAddress: user.email,
+    //     emailSubject:
+    //       "Password reset token from Meet Japan.Valid for 10 minutes.",
+    //     emailText: userEmailMessage,
+    //   });
     createHttpResponse(
       res,
       StatusCodes.OK,
