@@ -8,26 +8,13 @@ module.exports = class EmailHandler {
 
   // eslint-disable-next-line class-methods-use-this
   createTransport() {
-    // if (process.env.NODE_ENV === "production") {
-    // Sendgrid
-    // return nodemailer.createTransport({
-    //   service: "SendGrid",
-    //   auth: {
-    //     user: process.env.SENDGRID_USERNAME,
-    //     pass: process.env.SENDGRID_PASSWORD,
-    //   },
-    // });
-    // return 1;
-    // }
-    // Create transporter with Gmail service
+    // Create transporter with SendGrid or Gmail service
 
     return nodemailer.createTransport({
-      service: "gmail",
-      port: 465,
-      secure: true,
+      service: "SendGrid",
       auth: {
-        user: process.env.EMAIL_ADDRESS, // Your Gmail email address
-        pass: process.env.EMAIL_PASSCODE, // Your Gmail app password (generated in Gmail settings)
+        user: process.env.SENDGRID_USERNAME,
+        pass: process.env.SENDGRID_PASSWORD,
       },
     });
   }
@@ -45,8 +32,7 @@ module.exports = class EmailHandler {
       mailOptions.text = emailText;
     }
 
-    const messageStatus = await this.createTransport().sendMail(mailOptions);
-    console.log(messageStatus);
+    await this.createTransport().sendMail(mailOptions);
   }
 
   async sendNewUserWelcome(userName) {
@@ -114,5 +100,86 @@ module.exports = class EmailHandler {
     </html>`;
 
     await this.sendEmail(welcomeToMeetJapanHTML, "Welcome to Meet Japan!");
+  }
+
+  async sendPasswordResetTokenEmail(user, resetToken) {
+    const resetPasswordEmailHtml = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Password Reset</title>
+      <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background-color: #FCEDEA; /* Sakura Blossom color */
+          margin: 0;
+          padding: 0;
+          text-align: center;
+        }
+    
+        .container {
+          background-color: #FFFFFF;
+          border-radius: 8px;
+          margin: 20px auto;
+          padding: 20px;
+          width: 80%;
+          max-width: 600px;
+        }
+    
+        h1 {
+          color: #F2969B; /* Sakura Blossom accent color */
+        }
+    
+        p {
+          color: #555555;
+          font-size: 16px;
+          line-height: 1.6;
+          margin-bottom: 20px;
+        }
+    
+        a {
+          color: #F2969B;
+          text-decoration: none;
+          font-weight: bold;
+        }
+    
+        a:hover {
+          text-decoration: underline;
+        }
+    
+        .reset-button {
+          display: inline-block;
+          background-color: #F2969B;
+          color: #FFFFFF;
+          padding: 10px 20px;
+          border-radius: 5px;
+          text-decoration: none;
+        }
+    
+        .reset-button:hover {
+          background-color: #E08192; /* Lighter shade on hover */
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>Password Reset</h1>
+        <p>
+          Did you forget your password ${user.name}? You can generate a new one by clicking the following link:
+          <a href="${resetToken}" class="reset-button">Reset Password</a>.
+        </p>
+        <p>
+          If you didn't initiate this request, we advise you to reset your password to a more secure one.
+        </p>
+      </div>
+    </body>
+    </html>
+    `;
+
+    await this.sendEmail(
+      resetPasswordEmailHtml,
+      "Meet Japan | Password Reset Request!"
+    );
   }
 };

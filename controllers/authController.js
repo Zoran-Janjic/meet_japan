@@ -121,27 +121,22 @@ const forgotPassword = async (req, res, next) => {
   }
 
   // If user found generate reset token
-  // const resetToken = user.createPasswordResetToken();
+  const resetToken = user.createPasswordResetToken();
 
   // We need to save it so we save the reset token to the user
   await user.save({ validateBeforeSave: false });
 
   //  Send the plain text token to the user
-  // const resetUrlForUser = `${req.protocol}://${req.get(
-  //   "host"
-  // )}/api/v1/auth/resetPassword/${resetToken}`;
-
-  // const userEmailMessage = `Did you forget your password? You can generate a new
-  //  one by clicking the following link: ${resetUrlForUser}.\nIf you didn't initiate
-  //  this request, we advise you to reset your password to a more secure one.`;
+  const resetUrlForUser = `${req.protocol}://${req.get(
+    "host"
+  )}/api/v1/auth/resetPassword/${resetToken}`;
 
   try {
-    //   await sendEmail({
-    //     emailAddress: user.email,
-    //     emailSubject:
-    //       "Password reset token from Meet Japan.Valid for 10 minutes.",
-    //     emailText: userEmailMessage,
-    //   });
+    await new EmailHandler(user).sendPasswordResetTokenEmail(
+      user,
+      resetUrlForUser
+    );
+
     createHttpResponse(
       res,
       StatusCodes.OK,
