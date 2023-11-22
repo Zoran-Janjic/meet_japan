@@ -18,6 +18,7 @@ const usersRouter = require("./routes/users");
 const authRouter = require("./routes/auth");
 const reviewRouter = require("./routes/reviews");
 const adminRouter = require("./routes/admin");
+const bookingRouter = require("./routes/bookings");
 // * Security
 const security = require("./helpers/Security");
 const cookieParser = require("cookie-parser");
@@ -71,6 +72,7 @@ app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/reviews", reviewRouter);
 app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/booking", bookingRouter);
 // * The starting API call for GET /
 app.get("/", (req, res) => {
   res.send(
