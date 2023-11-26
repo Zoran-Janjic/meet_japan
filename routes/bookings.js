@@ -6,9 +6,8 @@ const bookingController = require("../controllers/bookingController");
 router.get(
   "/checkout-session/:tourId",
   applicationMiddleware.RouteProtect.protectedRoute,
-  applicationMiddleware.RoleRestrictedRoute.restrictTo("user", "tourguide"),
+  applicationMiddleware.RoleRestrictedRoute.restrictTo("user"),
   bookingController.getCheckoutSession
 );
-
 
 module.exports = router;
