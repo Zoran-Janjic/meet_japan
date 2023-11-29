@@ -3,7 +3,7 @@ const router = express.Router();
 const applicationMiddleware = require("../middleware/index");
 const bookingController = require("../controllers/bookingController");
 
-router.get(
+router.post(
   "/checkout-session/:tourId",
   applicationMiddleware.RouteProtect.protectedRoute,
   applicationMiddleware.RoleRestrictedRoute.restrictTo("user"),
