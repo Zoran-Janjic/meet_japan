@@ -12,47 +12,41 @@ const getCheckoutSession = async (req, res) => {
   const tour = await Tour.findById(req.params.tourId);
   // ? Create the checkout session
 
+  const product = await stripe.products.create({
+    name: `${tour.name} Tour`,
+    description: tour.summary,
+    images: [`${tour.imageCover}`],
+  });
+
+  const price = await stripe.prices.create({
+    product: product.id,
+    unit_amount: tour.price * 100,
+    currency: "usd",
+  });
+
   // Step 2: Create a Stripe Checkout session using the `stripe.checkout.sessions.create` method.
   const session = await stripe.checkout.sessions.create({
-    // Step 3: Define payment method types (in this case, only "card" is specified).
     payment_method_types: ["card"],
-
-    // Step 5: Provide customer details, such as the email address.
+    success_url: "http://localhost:3000/checkout/success",
+    cancel_url: "http://localhost:3000/checkout/cancel",
+    allow_promotion_codes: true,
     customer_email: req.user.email,
-
-    // Step 6: Set a client reference ID, which can be useful for associating the session with a specific entity (tourId in this case).
-    client_reference_id: req.params.tourId,
-
-    // Step 7: Define line items for the purchase, such as the tour details.
+    client_reference_id: req.params.tourID,
+    mode: "payment",
     line_items: [
       {
-        price_data: {
-          currency: "usd",
-          unit_amount: tour.price * 100,
-          product_data: {
-            name: `${tour.name} Tour`,
-            description: tour.summary,
-            images: [
-              "https://www.state.gov/wp-content/uploads/2019/04/Japan-2107x1406.jpg",
-            ],
-          },
-        },
+        price: price.id,
         quantity: 1,
       },
     ],
-    mode: "payment",
-    // Step 4: Specify success and cancel URLs for redirection after payment completion or cancellation.
-    success_url: `${req.protocol}://${req.get("host")}/`,
-    cancel_url: `${req.protocol}://${req.get("host")}/tours/${tour.slug}`,
   });
 
-  // Step 9:
   return createHttpResponse(
     res,
     StatusCodes.OK,
     "Success",
     "Session established.",
-    session
+    session.url
   );
 };
 
