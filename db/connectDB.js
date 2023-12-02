@@ -50,6 +50,7 @@ class DBConnectionClass {
       DBConnectionClass.DBConnectionStatus = true;
       return conn;
     } catch (error) {
+      console.log(error);
       console.log(`Error connecting to ${this.connectionUrlWithPassword}`);
       throw error; // Rethrow the error to handle it elsewhere
     }

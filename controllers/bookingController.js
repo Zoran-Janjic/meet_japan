@@ -12,18 +12,33 @@ const getCheckoutSession = async (req, res) => {
   const tour = await Tour.findById(req.params.tourId);
   // ? Create the checkout session
 
+  const product = await stripe.products.create({
+    name: `${tour.name} Tour`,
+    description: tour.summary,
+    images: [`${tour.imageCover}`],
+  });
+
+  const price = await stripe.prices.create({
+    product: product.id,
+    unit_amount: tour.price * 100,
+    currency: "usd",
+  });
+
   // Step 2: Create a Stripe Checkout session using the `stripe.checkout.sessions.create` method.
   const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    success_url: "http://localhost:3000/checkout/success",
+    cancel_url: "http://localhost:3000/checkout/cancel",
+    allow_promotion_codes: true,
+    customer_email: req.user.email,
+    client_reference_id: req.params.tourID,
+    mode: "payment",
     line_items: [
       {
-        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-        price: "price_1OHbj1IJzw20tdGpCZi9wvz0",
+        price: price.id,
         quantity: 1,
       },
     ],
-    mode: "payment",
-    success_url: "http://localhost:3000/checkout/success",
-    cancel_url: "http://localhost:3000/checkout/cancel",
   });
 
   return createHttpResponse(
