@@ -29,7 +29,15 @@ const getCheckoutSession = async (req, res) => {
     payment_method_types: ["card"],
     success_url: "http://localhost:3000/checkout/success",
     cancel_url: "http://localhost:3000/checkout/cancel",
-    allow_promotion_codes: true,
+    consent_collection: {
+      terms_of_service: "required",
+    },
+    custom_text: {
+      terms_of_service_acceptance: {
+        message: "I agree to the [Terms of Service]",
+      },
+    },
+    // allow_promotion_codes: true,
     customer_email: req.user.email,
     client_reference_id: req.params.tourID,
     mode: "payment",
