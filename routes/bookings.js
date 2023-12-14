@@ -17,5 +17,4 @@ router.get(
   applicationMiddleware.CreateBookingMiddleware.createBookingCheckout
 );
 
-
 module.exports = router;
