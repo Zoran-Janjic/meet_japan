@@ -11,7 +11,7 @@ const getCheckoutSession = async (req, res) => {
   // ? Get the currently booked tour
   const tour = await Tour.findById(req.params.tourId);
   // ? Create the checkout session
-
+  console.log(req.params);
   const product = await stripe.products.create({
     name: `${tour.name} Tour`,
     description: tour.summary,
@@ -27,9 +27,8 @@ const getCheckoutSession = async (req, res) => {
   // Step 2: Create a Stripe Checkout session using the `stripe.checkout.sessions.create` method.
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
-    success_url: `${req.protocol}://${req.get("host")}/?tourId/${
-      req.params.tourID
-    }&user=${req.user.id}&price=${tour.price}`,
+    // ! Change before deployment
+    success_url: `http://localhost:5000/api/v1/booking/tour/${req.params.tourId}/user/${req.user.id}/price/${tour.price}`,
     cancel_url: "http://localhost:3000/checkout/cancel",
     consent_collection: {
       terms_of_service: "required",
@@ -59,7 +58,5 @@ const getCheckoutSession = async (req, res) => {
     session.url
   );
 };
-
-const createBookingCheckout = async (session) => {};
 
 module.exports = { getCheckoutSession };
