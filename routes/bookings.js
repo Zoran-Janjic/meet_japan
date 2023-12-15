@@ -10,4 +10,11 @@ router.post(
   bookingController.getCheckoutSession
 );
 
+router.get(
+  "/tour/:tour/user/:user/price/:price",
+  applicationMiddleware.RouteProtect.protectedRoute,
+  applicationMiddleware.RoleRestrictedRoute.restrictTo("user"),
+  applicationMiddleware.CreateBookingMiddleware.createBookingCheckout
+);
+
 module.exports = router;
