@@ -8,6 +8,7 @@ const createHttpResponse = require("../helpers/createHttpResponse");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const getCheckoutSession = async (req, res) => {
+  //! Refaoctr befor deploy
   // ? Get the currently booked tour
   const tour = await Tour.findById(req.params.tourId);
   // ? Create the checkout session
