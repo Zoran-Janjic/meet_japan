@@ -15,9 +15,7 @@ const createBookingCheckout = async (req, res) => {
     return res.status(400).json({ msg: "Tour not found", status: "Failed" });
   }
 
-  const a = await Booking.create({ tour, user, price });
-
-  console.log(a);
+  await Booking.create({ tour, user, price });
 
   res.redirect("http://localhost:3000/booking/success");
 };

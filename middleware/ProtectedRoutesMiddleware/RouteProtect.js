@@ -42,6 +42,7 @@ const protectedRoute = async (req, res, next) => {
     [, tokenFromRequest] = req.headers.authorization.split(" ");
   } else if (req.cookies.meet_japan_jwt) {
     tokenFromRequest = req.cookies.meet_japan_jwt;
+
   } else {
     return next(new JsonWebTokenError("Missing token"));
   }
