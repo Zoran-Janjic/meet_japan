@@ -62,8 +62,9 @@ const getCheckoutSession = async (req, res) => {
 };
 
 const getAllUserBookings = async (req, res) => {
+  console.log("I HERE");
   const bookings = await Booking.find({ user: req.params.user });
-
+  console.log("I HERE", req.params.user);
   return createHttpResponse(
     res,
     StatusCodes.OK,
