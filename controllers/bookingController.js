@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 const { StatusCodes } = require("http-status-codes");
 const Tour = require("../models/Tour");
+const Booking = require("../models/Booking");
 // const ControllerHandlerFactory = require("../helpers/FactoryHandlerFunctions/ControllerHandlerFactory");
 // const DatabaseOperationsConstants = require("../helpers/Constants/DatabaseOperationsConstants");
 // const BadRequestError = require("../errors/index");
@@ -60,4 +61,16 @@ const getCheckoutSession = async (req, res) => {
   );
 };
 
-module.exports = { getCheckoutSession };
+const getAllUserBookings = async (req, res) => {
+  const bookings = await Booking.find({ user: req.params.user });
+
+  return createHttpResponse(
+    res,
+    StatusCodes.OK,
+    "Success",
+    "All user bookings.",
+    bookings
+  );
+};
+
+module.exports = { getCheckoutSession, getAllUserBookings };

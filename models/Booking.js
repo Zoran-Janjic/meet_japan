@@ -20,7 +20,7 @@ const bookingSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    createdAdd: {
+    createdAt: {
       type: Date,
       default: Date.now(),
     },
