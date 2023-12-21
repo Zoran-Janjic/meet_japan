@@ -17,8 +17,8 @@ router.get(
   applicationMiddleware.CreateBookingMiddleware.createBookingCheckout
 );
 
-router.post(
-  "/my_bookings/user/:user",
+router.get(
+  "/my_bookings",
   applicationMiddleware.RouteProtect.protectedRoute,
   applicationMiddleware.RoleRestrictedRoute.restrictTo("user"),
   bookingController.getAllUserBookings
