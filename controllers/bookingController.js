@@ -9,7 +9,7 @@ const createHttpResponse = require("../helpers/createHttpResponse");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const getCheckoutSession = async (req, res) => {
-  //! Refaoctr befor deploy
+  //! Refactor befor deploy
   // ? Get the currently booked tour
   const tour = await Tour.findById(req.params.tourId);
   // ? Create the checkout session
@@ -62,9 +62,7 @@ const getCheckoutSession = async (req, res) => {
 };
 
 const getAllUserBookings = async (req, res) => {
-  console.log("I HERE");
-  const bookings = await Booking.find({ user: req.params.user });
-  console.log("I HERE", req.params.user);
+  const bookings = await Booking.find({ user: req.user.id });
   return createHttpResponse(
     res,
     StatusCodes.OK,
@@ -73,5 +71,7 @@ const getAllUserBookings = async (req, res) => {
     bookings
   );
 };
+
+// TODO: ADD CRUD FOR BOOKINGS
 
 module.exports = { getCheckoutSession, getAllUserBookings };
