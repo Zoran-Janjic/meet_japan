@@ -9,7 +9,7 @@ const createHttpResponse = require("../helpers/createHttpResponse");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const getCheckoutSession = async (req, res) => {
-  //! Refaoctr befor deploy
+  //! Refactor befor deploy
   // ? Get the currently booked tour
   const tour = await Tour.findById(req.params.tourId);
   // ? Create the checkout session
@@ -62,9 +62,7 @@ const getCheckoutSession = async (req, res) => {
 };
 
 const getAllUserBookings = async (req, res) => {
-  console.log("I HERE");
-  const bookings = await Booking.find({ user: req.params.user });
-  console.log("I HERE", req.params.user);
+  const bookings = await Booking.find({ user: req.user.id });
   return createHttpResponse(
     res,
     StatusCodes.OK,
@@ -74,4 +72,29 @@ const getAllUserBookings = async (req, res) => {
   );
 };
 
-module.exports = { getCheckoutSession, getAllUserBookings };
+const cancelBookedTour = async (req, res) => {
+  const booking = await Booking.findOneAndDelete({
+    tour: req.params.tourId,
+    user: req.user.id,
+  });
+
+  if (!booking) {
+    return createHttpResponse(
+      res,
+      StatusCodes.BAD_REQUEST,
+      "Fail",
+      "No booking found with that ID."
+    );
+  }
+  return createHttpResponse(
+    res,
+    StatusCodes.OK,
+    "Success",
+    "Booking canceled.",
+    booking
+  );
+};
+
+// TODO: ADD CRUD FOR BOOKINGS
+
+module.exports = { getCheckoutSession, getAllUserBookings, cancelBookedTour };

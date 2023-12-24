@@ -24,4 +24,11 @@ router.get(
   bookingController.getAllUserBookings
 );
 
+router.delete(
+  "/my_bookings/tour/:tourId",
+  applicationMiddleware.RouteProtect.protectedRoute,
+  applicationMiddleware.RoleRestrictedRoute.restrictTo("user"),
+  bookingController.cancelBookedTour
+);
+
 module.exports = router;
