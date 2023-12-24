@@ -72,6 +72,29 @@ const getAllUserBookings = async (req, res) => {
   );
 };
 
+const cancelBookedTour = async (req, res) => {
+  const booking = await Booking.findOneAndDelete({
+    tour: req.params.tourId,
+    user: req.user.id,
+  });
+
+  if (!booking) {
+    return createHttpResponse(
+      res,
+      StatusCodes.BAD_REQUEST,
+      "Fail",
+      "No booking found with that ID."
+    );
+  }
+  return createHttpResponse(
+    res,
+    StatusCodes.OK,
+    "Success",
+    "Booking canceled.",
+    booking
+  );
+};
+
 // TODO: ADD CRUD FOR BOOKINGS
 
-module.exports = { getCheckoutSession, getAllUserBookings };
+module.exports = { getCheckoutSession, getAllUserBookings, cancelBookedTour };
