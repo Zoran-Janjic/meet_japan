@@ -6,7 +6,7 @@ const deleteOneDocument = (Model, actionType) => async (req, res) => {
   try {
     // Check if tour exists
     const foundDocument = await Model[actionType](req.params.id);
-
+    console.log(foundDocument, req.params.id);
     // If tour does not exist send not found response
     if (!foundDocument) {
       return res.status(StatusCodes.NOT_FOUND).json({

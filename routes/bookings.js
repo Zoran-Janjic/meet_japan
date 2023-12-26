@@ -17,18 +17,25 @@ router.get(
   applicationMiddleware.CreateBookingMiddleware.createBookingCheckout
 );
 
+// Get all bookings for the specific user
 router.get(
   "/my_bookings",
   applicationMiddleware.RouteProtect.protectedRoute,
   applicationMiddleware.RoleRestrictedRoute.restrictTo("user"),
-  bookingController.getAllUserBookings
+  bookingController.getAllBookings
 );
 
 router.delete(
-  "/my_bookings/tour/:tourId",
+  "/my_bookings/booking/:id",
   applicationMiddleware.RouteProtect.protectedRoute,
   applicationMiddleware.RoleRestrictedRoute.restrictTo("user"),
-  bookingController.cancelBookedTour
+  bookingController.deleteBooking
+);
+
+router.patch(
+  "/my_bookings/:id",
+  applicationMiddleware.RoleRestrictedRoute.restrictTo("user"),
+  bookingController.updateBooking
 );
 
 module.exports = router;

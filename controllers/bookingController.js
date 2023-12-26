@@ -2,9 +2,9 @@
 const { StatusCodes } = require("http-status-codes");
 const Tour = require("../models/Tour");
 const Booking = require("../models/Booking");
-// const ControllerHandlerFactory = require("../helpers/FactoryHandlerFunctions/ControllerHandlerFactory");
-// const DatabaseOperationsConstants = require("../helpers/Constants/DatabaseOperationsConstants");
-// const BadRequestError = require("../errors/index");
+const ControllerHandlerFactory = require("../helpers/FactoryHandlerFunctions/ControllerHandlerFactory");
+const DatabaseOperationsConstants = require("../helpers/Constants/DatabaseOperationsConstants");
+const BadRequestError = require("../errors/index");
 const createHttpResponse = require("../helpers/createHttpResponse");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
@@ -61,40 +61,60 @@ const getCheckoutSession = async (req, res) => {
   );
 };
 
-const getAllUserBookings = async (req, res) => {
-  const bookings = await Booking.find({ user: req.user.id });
-  return createHttpResponse(
-    res,
-    StatusCodes.OK,
-    "Success",
-    "All user bookings.",
-    bookings
-  );
+// const cancelBookedTour = async (req, res) => {
+//   const booking = await Booking.findOneAndDelete({
+//     tour: req.params.tourId,
+//     user: req.user.id,
+//   });
+
+//   if (!booking) {
+//     return createHttpResponse(
+//       res,
+//       StatusCodes.BAD_REQUEST,
+//       "Fail",
+//       "No booking found with that ID."
+//     );
+//   }
+//   return createHttpResponse(
+//     res,
+//     StatusCodes.OK,
+//     "Success",
+//     "Booking canceled.",
+//     booking
+//   );
+// };
+
+const createBooking = ControllerHandlerFactory.createDocument(
+  Booking,
+  DatabaseOperationsConstants.CREATE_NEW_DOCUMENT
+);
+
+const updateBooking = ControllerHandlerFactory.updateDocument(
+  Booking,
+  DatabaseOperationsConstants.UPDATE_SINGLE_DOCUMENT_BY_ID
+);
+
+const getAllBookings = ControllerHandlerFactory.getAllDocuments(
+  Booking,
+  DatabaseOperationsConstants.GET_ALL_DOCUMENTS
+);
+
+const getBooking = ControllerHandlerFactory.getDocument(
+  Booking,
+  DatabaseOperationsConstants.GET_DOCUMENT_BY_ID,
+  {}
+);
+
+const deleteBooking = ControllerHandlerFactory.deleteOneDocument(
+  Booking,
+  DatabaseOperationsConstants.DELETE_SINGLE_DOCUMENT_BY_ID
+);
+
+module.exports = {
+  createBooking,
+  getCheckoutSession,
+  updateBooking,
+  getAllBookings,
+  getBooking,
+  deleteBooking,
 };
-
-const cancelBookedTour = async (req, res) => {
-  const booking = await Booking.findOneAndDelete({
-    tour: req.params.tourId,
-    user: req.user.id,
-  });
-
-  if (!booking) {
-    return createHttpResponse(
-      res,
-      StatusCodes.BAD_REQUEST,
-      "Fail",
-      "No booking found with that ID."
-    );
-  }
-  return createHttpResponse(
-    res,
-    StatusCodes.OK,
-    "Success",
-    "Booking canceled.",
-    booking
-  );
-};
-
-// TODO: ADD CRUD FOR BOOKINGS
-
-module.exports = { getCheckoutSession, getAllUserBookings, cancelBookedTour };
