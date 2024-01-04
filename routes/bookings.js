@@ -32,6 +32,7 @@ router.delete(
   bookingController.deleteBooking
 );
 
+// TODO Implement update booking
 router.patch(
   "/my_bookings/:id",
   applicationMiddleware.RoleRestrictedRoute.restrictTo("user"),

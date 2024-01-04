@@ -4,7 +4,6 @@ const Tour = require("../models/Tour");
 const Booking = require("../models/Booking");
 const ControllerHandlerFactory = require("../helpers/FactoryHandlerFunctions/ControllerHandlerFactory");
 const DatabaseOperationsConstants = require("../helpers/Constants/DatabaseOperationsConstants");
-const BadRequestError = require("../errors/index");
 const createHttpResponse = require("../helpers/createHttpResponse");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
@@ -13,7 +12,6 @@ const getCheckoutSession = async (req, res) => {
   // ? Get the currently booked tour
   const tour = await Tour.findById(req.params.tourId);
   // ? Create the checkout session
-  console.log(req.params);
   const product = await stripe.products.create({
     name: `${tour.name} Tour`,
     description: tour.summary,
@@ -60,29 +58,6 @@ const getCheckoutSession = async (req, res) => {
     session.url
   );
 };
-
-// const cancelBookedTour = async (req, res) => {
-//   const booking = await Booking.findOneAndDelete({
-//     tour: req.params.tourId,
-//     user: req.user.id,
-//   });
-
-//   if (!booking) {
-//     return createHttpResponse(
-//       res,
-//       StatusCodes.BAD_REQUEST,
-//       "Fail",
-//       "No booking found with that ID."
-//     );
-//   }
-//   return createHttpResponse(
-//     res,
-//     StatusCodes.OK,
-//     "Success",
-//     "Booking canceled.",
-//     booking
-//   );
-// };
 
 const createBooking = ControllerHandlerFactory.createDocument(
   Booking,

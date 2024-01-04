@@ -12,6 +12,7 @@ const cors = require("cors");
 // * Middleware
 const Logger = require("./middleware/AppLogger");
 const ErrorHandler = require("./middleware/ErrorHandler");
+const responseCompression = require("compression");
 // * Routes
 const tourRouter = require("./routes/tours");
 const usersRouter = require("./routes/users");
@@ -55,6 +56,8 @@ if (process.env.NODE_ENV === "production") {
   app.use(security.preventParameterPollution());
   // ! Remove later for production and use only for development
   app.use(Logger.requestLogger);
+  // * Compression middleware for text in API responses
+  app.use(responseCompression());
 }
 // ! Any middleware needed for development only
 if (process.env.NODE_ENV !== "production") {

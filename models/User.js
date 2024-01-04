@@ -160,7 +160,7 @@ userSchema.pre("save", async function (next) {
   if (!this.isModified("password") || this.isNew) return next();
 
   this.lastPasswordChangedDate = Date.now() - 1000;
-  console.log(this);
+
   next();
 });
 

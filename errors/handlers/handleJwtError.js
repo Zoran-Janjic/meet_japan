@@ -6,7 +6,6 @@ const USER_NOT_REGISTERED = "User not found";
 const PASSWORD_CHANGED = "Password changed";
 const handleDuplicateKeyError = (customError, err) => {
   const newError = { ...customError };
-  console.log(newError);
   switch (err.msg) {
   case INVALID_TOKEN:
     newError.msg = "Invalid token.";
