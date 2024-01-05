@@ -36,17 +36,44 @@ const registerUser = async (req, res, next) => {
     // Send welcome email to the user
     await new EmailHandler(newUser).sendNewUserWelcome(newUser.name);
 
+    // Create email confirmation token
+
+    const user = await User.findOne({ email: newUser.email });
+
+    const emailConfirmationToken = user.createEmailConfirmToken();
+
+    console.log("emailConfirmationToken", emailConfirmationToken);
+    // We need to save it so we save the reset token to the user
+    await user.save({ validateBeforeSave: false });
+
+    //  Send the plain text token to the user
+    const confirmationUrlForUser = `${req.protocol}://${req.get(
+      "host"
+    )}/api/v1/auth/verify/${emailConfirmationToken}`;
+
+    await new EmailHandler(user).send_new_user_email_confirmation(
+      user,
+      confirmationUrlForUser
+    );
+
+    createHttpResponse(
+      res,
+      StatusCodes.OK,
+      "success",
+      `Email confirmation token sent to your registered email address: ${user.email}`
+    );
+
     // Return success response with user details (omit password for security)
-    res.status(StatusCodes.CREATED).json({
-      success: true,
-      user: {
-        id: newUser.id,
-        email: newUser.email,
-        name: newUser.name,
-        role: newUser.role,
-        avatar: newUser.photo,
-      },
-    });
+    // res.status(StatusCodes.CREATED).json({
+    //   success: true,
+    //   user: {
+    //     id: newUser.id,
+    //     email: newUser.email,
+    //     name: newUser.name,
+    //     role: newUser.role,
+    //     avatar: newUser.photo,
+    //   },
+    // });
   } catch (error) {
     next(error); // Pass the error to the error-handling middleware
   }
@@ -202,6 +229,48 @@ const resetPassword = async (req, res, next) => {
   );
 };
 
+// ? Confirm the email confirmation token
+const confirmEmail = async (req, res, next) => {
+  // * Get the token and hash it so we can find a user based on it
+
+  const hashedConfirmationToken = crypto
+    .createHash("sha256")
+    .update(req.params.verifyToken)
+    .digest("hex");
+
+  // * Check if token has not expired
+
+  const user = await User.findOne({
+    emailConfirmationToken: hashedConfirmationToken,
+    emailConfirmationTokenExpiration: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(
+      new BadRequestError(
+        "Token has expired. Please try again with a new confirmation token."
+      )
+    );
+  }
+  // * Update the user password
+  user.emailConfirmed = true;
+
+  // * Delete the password reset token and token valid time
+  user.emailConfirmationToken = undefined;
+  user.emailConfirmationTokenExpiration = undefined;
+
+  await user.save();
+  // * Log the user in and send the new JWT
+
+  createResponseWithJWT(
+    res,
+    StatusCodes.OK,
+    "success",
+    user.createToken(),
+    "Email confirmed successfully."
+  );
+};
+
 // ? Update user password
 // ! Do not use the factory update method for this operation
 const updatePassword = async (req, res, next) => {
@@ -243,4 +312,5 @@ module.exports = {
   forgotPassword,
   resetPassword,
   updatePassword,
+  confirmEmail,
 };

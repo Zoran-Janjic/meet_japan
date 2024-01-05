@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 const nodemailer = require("nodemailer");
 
 module.exports = class EmailHandler {
@@ -6,7 +7,6 @@ module.exports = class EmailHandler {
     this.from = `MEET JAPAN ${process.env.EMAIL_ADDRESS}`;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   createTransport() {
     // Create transporter with SendGrid or Gmail service
 
@@ -180,6 +180,87 @@ module.exports = class EmailHandler {
     await this.sendEmail(
       resetPasswordEmailHtml,
       "Meet Japan | Password Reset Request!"
+    );
+  }
+
+  async send_new_user_email_confirmation(user, confirmationToken) {
+    const confirmEmailHtml = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Please confirm your email</title>
+      <style>
+        body {
+          font-family: 'Arial', sans-serif;
+          background-color: #FCEDEA; /* Sakura Blossom color */
+          margin: 0;
+          padding: 0;
+          text-align: center;
+        }
+    
+        .container {
+          background-color: #FFFFFF;
+          border-radius: 8px;
+          margin: 20px auto;
+          padding: 20px;
+          width: 80%;
+          max-width: 600px;
+        }
+    
+        h1 {
+          color: #F2969B; /* Sakura Blossom accent color */
+        }
+    
+        p {
+          color: #555555;
+          font-size: 16px;
+          line-height: 1.6;
+          margin-bottom: 20px;
+        }
+    
+        a {
+          color: #F2969B;
+          text-decoration: none;
+          font-weight: bold;
+        }
+    
+        a:hover {
+          text-decoration: underline;
+        }
+    
+        .reset-button {
+          display: inline-block;
+          background-color: #F2969B;
+          color: #FFFFFF;
+          padding: 10px 20px;
+          border-radius: 5px;
+          text-decoration: none;
+        }
+    
+        .reset-button:hover {
+          background-color: #E08192; /* Lighter shade on hover */
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>Confirm your email address</h1>
+        <p>
+          Did you just create a new account with the username: ${user.name}? You can confirm your email address by clicking the following link:
+          <a href="${confirmationToken}" class="reset-button">Verify your email</a>.
+        </p>
+        <p>
+          If you didn't initiate this request, please disregard this.
+        </p>
+      </div>
+    </body>
+    </html>
+    `;
+
+    await this.sendEmail(
+      confirmEmailHtml,
+      "Meet Japan | Email Confirm Request!"
     );
   }
 };

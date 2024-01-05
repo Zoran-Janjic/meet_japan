@@ -59,7 +59,12 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       validate: [validator.isEmail, "Please enter a valid email."],
     },
-    photo: String,
+    emailConfirmed: { type: Boolean, default: false },
+    photo: {
+      type: String,
+      default:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT87xnQfLfn6bsjDHSVojsa2u4b_JBA1IT2Sg&usqp=CAU",
+    },
     password: {
       type: String,
       required: [true, "User must provide a valid password."],
@@ -86,6 +91,8 @@ const userSchema = new mongoose.Schema(
     passwordResetToken: { type: String },
     passwordResetTokenExpiration: { type: Date },
     lastPasswordChangedDate: { type: Date },
+    emailConfirmationToken: { type: String },
+    emailConfirmationTokenExpiration: { type: Date },
     active: {
       type: Boolean,
       default: true,
@@ -202,6 +209,19 @@ userSchema.methods.createPasswordResetToken = function () {
 
   //  Return the reset token to be send with the reset email
   return resetToken;
+};
+
+// ? Create a reset token in case user forgot password
+userSchema.methods.createEmailConfirmToken = function () {
+  const { confirmToken, hashedToken } = generateRandomToken();
+
+  this.emailConfirmationToken = hashedToken;
+
+  //  Reset token valid for 10 minutes
+  this.emailConfirmationTokenExpiration = Date.now() + 10 * 60 * 1000;
+
+  //  Return the reset token to be send with the reset email
+  return confirmToken;
 };
 
 // *  End of instance methods

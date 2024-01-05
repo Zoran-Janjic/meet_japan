@@ -16,6 +16,9 @@ router.post("/forgotPassword", authController.forgotPassword);
 // ? Route for resetting password using reset token
 router.patch("/resetPassword/:resetToken", authController.resetPassword);
 
+// ? Route for resetting password using reset token
+router.patch("/verify/:verifyToken", authController.confirmEmail);
+
 // ? Route for updating password
 router.patch(
   "/updatePassword",
