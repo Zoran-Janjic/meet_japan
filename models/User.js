@@ -213,15 +213,14 @@ userSchema.methods.createPasswordResetToken = function () {
 
 // ? Create a reset token in case user forgot password
 userSchema.methods.createEmailConfirmToken = function () {
-  const { confirmToken, hashedToken } = generateRandomToken();
-
+  const { resetToken, hashedToken } = generateRandomToken();
   this.emailConfirmationToken = hashedToken;
 
   //  Reset token valid for 10 minutes
   this.emailConfirmationTokenExpiration = Date.now() + 10 * 60 * 1000;
 
   //  Return the reset token to be send with the reset email
-  return confirmToken;
+  return resetToken;
 };
 
 // *  End of instance methods

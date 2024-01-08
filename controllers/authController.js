@@ -6,6 +6,7 @@ const crypto = require("crypto");
 // const helpers = require("../helpers");
 const createHttpResponse = require("../helpers/createHttpResponse");
 const createResponseWithJWT = require("../helpers/createJWTResponse");
+
 // ? Add special route for adding admin privilege
 
 // ! check cookie for register is being sent
@@ -33,16 +34,12 @@ const registerUser = async (req, res, next) => {
     // Set the JWT cookie in the response
     res.cookie("meet_japan_jwt", jwtToken, cookieOptions);
 
-    // Send welcome email to the user
-    await new EmailHandler(newUser).sendNewUserWelcome(newUser.name);
-
     // Create email confirmation token
 
     const user = await User.findOne({ email: newUser.email });
 
     const emailConfirmationToken = user.createEmailConfirmToken();
 
-    console.log("emailConfirmationToken", emailConfirmationToken);
     // We need to save it so we save the reset token to the user
     await user.save({ validateBeforeSave: false });
 
@@ -56,6 +53,9 @@ const registerUser = async (req, res, next) => {
       confirmationUrlForUser
     );
 
+    // Send welcome email to the user
+    await new EmailHandler(newUser).sendNewUserWelcome(newUser.name);
+    console.log("newUser", confirmationUrlForUser);
     createHttpResponse(
       res,
       StatusCodes.OK,
@@ -232,6 +232,7 @@ const resetPassword = async (req, res, next) => {
 // ? Confirm the email confirmation token
 const confirmEmail = async (req, res, next) => {
   // * Get the token and hash it so we can find a user based on it
+  console.log("token", typeof req.params.verifyToken);
 
   const hashedConfirmationToken = crypto
     .createHash("sha256")
@@ -259,7 +260,7 @@ const confirmEmail = async (req, res, next) => {
   user.emailConfirmationToken = undefined;
   user.emailConfirmationTokenExpiration = undefined;
 
-  await user.save();
+  await user.save({ validateBeforeSave: false });
   // * Log the user in and send the new JWT
 
   createResponseWithJWT(
@@ -267,7 +268,7 @@ const confirmEmail = async (req, res, next) => {
     StatusCodes.OK,
     "success",
     user.createToken(),
-    "Email confirmed successfully."
+    "Email confirmed successfully. You can now login to your account."
   );
 };
 
