@@ -24,4 +24,10 @@ router.patch(
   authController.updatePassword
 );
 
+// ? Route for confirming registration email
+router.get(
+  "/confirmRegistrationEmail",
+  authController.confirmRegistrationEmail
+);
+
 module.exports = router; // ? Export the router object for use in other modules

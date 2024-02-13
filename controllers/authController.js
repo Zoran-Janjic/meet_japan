@@ -237,10 +237,16 @@ const updatePassword = async (req, res, next) => {
   );
 };
 
+// ! Add confirm email handler
+const confirmRegistrationEmail = async (req, res, next) => {
+  console.log(req, res, next);
+};
+
 module.exports = {
   registerUser,
   loginUser,
   forgotPassword,
   resetPassword,
   updatePassword,
+  confirmRegistrationEmail,
 };
