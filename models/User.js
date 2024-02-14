@@ -91,6 +91,10 @@ const userSchema = new mongoose.Schema(
       default: true,
       select: false,
     },
+    emailConfirmationToken: { type: String },
+    emailConfirmationTokenExpiration: { type: Date },
+    accountEmailConfirmed: { type: Boolean, default: false },
+    accountEmailConfirmedAt: { type: Date },
   },
   {
     timestamps: true,
@@ -192,10 +196,22 @@ userSchema.methods.wasPasswordChangedAfterJWTIssued = function (jwtIssuedTime) {
   }
 };
 
+// Create new account confirmation token
+userSchema.methods.createConfirmationToken = function () {
+  const { resetToken, hashedToken } = generateRandomToken();
+
+  //  Save the hashed token to the database for the current user
+  this.emailConfirmationToken = hashedToken;
+  //  Confirmation token valid for 10 minutes
+  this.emailConfirmationTokenExpiration = Date.now() + 10 * 60 * 1000;
+  //  Return the confirmation token to be send with the confirmation email
+  return resetToken;
+};
+
 // ? Create a reset token in case user forgot password
 userSchema.methods.createPasswordResetToken = function () {
   const { resetToken, hashedToken } = generateRandomToken();
-
+  //  Save the hashed token to the database
   this.passwordResetToken = hashedToken;
   //  Reset token valid for 10 minutes
   this.passwordResetTokenExpiration = Date.now() + 10 * 60 * 1000;

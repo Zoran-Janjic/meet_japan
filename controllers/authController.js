@@ -11,43 +11,30 @@ const createResponseWithJWT = require("../helpers/createJWTResponse");
 // ! check cookie for register is being sent
 // ? Register new user
 const registerUser = async (req, res, next) => {
-  const newUser = await User.create(req.body);
-  newUser.password = undefined;
-
   try {
-    // If email and password are correct, create a JWT token for the user
-    const jwtToken = newUser.createToken();
+    // Create a new user with the provided details
+    const newUser = await User.create(req.body);
 
-    const cookieOptions = {
-      maxAge: 3 * 60 * 60 * 1000, // Set the maxAge in milliseconds,
-      sameSite: "none",
-      httpOnly: true,
-      secure: false,
-    };
+    // Send welcome email to the user with the email confirmation token
+    const confirmationToken = newUser.createConfirmationToken();
+    // We need to save it so we save the confirmation token to the user
+    await newUser.save({ validateBeforeSave: false });
+    //  Send the plain text token to the user
+    const accountConfirmationUrl = `${req.protocol}://${req.get(
+      "host"
+    )}/api/v1/auth/confirmRegistrationEmail/${confirmationToken}`;
 
-    // Set 'secure' option for the cookie if in production mode
-    if (process.env.NODE_ENV === "production") {
-      cookieOptions.secure = true; // Cookie will only be sent over HTTPS
-      cookieOptions.sameSite = "none"; // Cookie will be sent for cross-site requests
-    }
-    // Set the JWT cookie in the response
-    res.cookie("meet_japan_jwt", jwtToken, cookieOptions);
+    await new EmailHandler(newUser).sendNewAccountConfirmationEmail(
+      newUser,
+      accountConfirmationUrl
+    );
 
-    // Send welcome email to the user
-    await new EmailHandler(newUser).sendNewUserWelcome(newUser.name);
-
-    // Return success response with user details (omit password for security)
-    res.status(StatusCodes.CREATED).json({
+    res.status(StatusCodes.OK).json({
       success: true,
-      user: {
-        id: newUser.id,
-        email: newUser.email,
-        name: newUser.name,
-        role: newUser.role,
-        avatar: newUser.photo,
-      },
+      message: `A confirmation email has been sent to ${newUser.email}. Please confirm your email to complete the registration.`,
     });
   } catch (error) {
+    console.log("error => ", error);
     next(error); // Pass the error to the error-handling middleware
   }
 };
@@ -239,7 +226,67 @@ const updatePassword = async (req, res, next) => {
 
 // ! Add confirm email handler
 const confirmRegistrationEmail = async (req, res, next) => {
-  console.log(req, res, next);
+  // * Get the token and hash it so we can find a user based on it
+  const hashedEmailConfirmationToken = crypto
+    .createHash("sha256")
+    .update(req.params.confirmationToken)
+    .digest("hex");
+
+  // Try to fin the user with the hashed token and the token expiration date
+  const user = await User.findOne({
+    emailConfirmationToken: hashedEmailConfirmationToken,
+    emailConfirmationTokenExpiration: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(
+      new BadRequestError(
+        "Token has expired. Please try again. If the problem persists please contact us directly on the support email."
+      )
+    );
+  }
+
+  // * If the user is found than confirm the email and remove the confirmation token and
+  // remove the confirmation token and token valid time
+  user.accountEmailConfirmed = true;
+  user.accountEmailConfirmedAt = Date.now();
+  user.emailConfirmationToken = undefined;
+  user.emailConfirmationTokenExpiration = undefined;
+  // * Save the user to the database and turn off the validation for the password
+  await user.save({ validateBeforeSave: false });
+
+  // * Log the user in and send the new JWT
+  const jwtToken = user.createToken();
+
+  const cookieOptions = {
+    maxAge: 3 * 60 * 60 * 1000, // Set the maxAge in milliseconds,
+    sameSite: "none",
+    httpOnly: true,
+    secure: false,
+  };
+
+  // Set 'secure' option for the cookie if in production mode
+  if (process.env.NODE_ENV === "production") {
+    cookieOptions.secure = true; // Cookie will only be sent over HTTPS
+    cookieOptions.sameSite = "none"; // Cookie will be sent for cross-site requests
+  }
+  // Set the JWT cookie in the response
+  res.cookie("meet_japan_jwt", jwtToken, cookieOptions);
+
+  // Send welcome email to the user
+  await new EmailHandler(user).sendNewUserAccountConfirmedEmail(user);
+
+  // Return success response with user details (omit password for security)
+  res.status(StatusCodes.CREATED).json({
+    success: true,
+    user: {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      avatar: user.photo,
+    },
+  });
 };
 
 module.exports = {

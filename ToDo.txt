@@ -13,3 +13,5 @@
 9. Make get newest 6 reviews or newest six reviews from users
 
 10. *   // ! put cookie back to secure before  production
+
+11. Create a function for creating cookie and sending back so we can reuse it
