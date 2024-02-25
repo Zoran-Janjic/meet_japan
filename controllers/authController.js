@@ -20,9 +20,7 @@ const registerUser = async (req, res, next) => {
     // We need to save it so we save the confirmation token to the user
     await newUser.save({ validateBeforeSave: false });
     //  Send the plain text token to the user
-    const accountConfirmationUrl = `${req.protocol}://${req.get(
-      "host"
-    )}/api/v1/auth/confirmRegistrationEmail/${confirmationToken}`;
+    const accountConfirmationUrl = `${req.protocol}://localhost:3000/confirmRegistrationEmail/${confirmationToken}`;
 
     await new EmailHandler(newUser).sendNewAccountConfirmationEmail(
       newUser,
@@ -55,6 +53,11 @@ const loginUser = async (req, res, next) => {
     if (!user || !(await user.checkPassword(password))) {
       // If the email or password is incorrect, return an unauthenticated error
       return next(new CustomAPIError("Invalid email or password.", 401));
+    }
+
+    // Check if the user has confirmed their email and send an error if not
+    if (!user.accountEmailConfirmed) {
+      return next(new CustomAPIError("Please confirm your email.", 403));
     }
 
     // If email and password are correct, create a JWT token for the user

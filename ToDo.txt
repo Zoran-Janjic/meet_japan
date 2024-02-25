@@ -15,3 +15,5 @@
 10. *   // ! put cookie back to secure before  production
 
 11. Create a function for creating cookie and sending back so we can reuse it
+
+* Add send another confirmation email if token expired
