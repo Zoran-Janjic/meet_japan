@@ -229,7 +229,7 @@ const updatePassword = async (req, res, next) => {
 
 // ! Add confirm email handler
 const confirmRegistrationEmail = async (req, res, next) => {
-  // * Get the token and hash it so we can find a user based on it
+  //  Get the token and hash it so we can find a user based on it
   const hashedEmailConfirmationToken = crypto
     .createHash("sha256")
     .update(req.params.confirmationToken)
@@ -250,7 +250,7 @@ const confirmRegistrationEmail = async (req, res, next) => {
   }
 
   // * If the user is found than confirm the email and remove the confirmation token and
-  // remove the confirmation token and token valid time
+  //  the token valid time
   user.accountEmailConfirmed = true;
   user.accountEmailConfirmedAt = Date.now();
   user.emailConfirmationToken = undefined;
@@ -282,6 +282,7 @@ const confirmRegistrationEmail = async (req, res, next) => {
   // Return success response with user details (omit password for security)
   res.status(StatusCodes.CREATED).json({
     success: true,
+    jwt_token: jwtToken,
     user: {
       id: user.id,
       email: user.email,

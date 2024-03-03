@@ -25,7 +25,7 @@ router.patch(
 );
 
 // ? Route for confirming registration email
-router.get(
+router.post(
   "/confirmRegistrationEmail/:confirmationToken",
   authController.confirmRegistrationEmail
 );
