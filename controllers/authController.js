@@ -6,6 +6,7 @@ const crypto = require("crypto");
 // const helpers = require("../helpers");
 const createHttpResponse = require("../helpers/createHttpResponse");
 const createResponseWithJWT = require("../helpers/createJWTResponse");
+
 // ? Add special route for adding admin privilege
 
 // ! check cookie for register is being sent
@@ -293,6 +294,67 @@ const confirmRegistrationEmail = async (req, res, next) => {
   });
 };
 
+// ! Add resend confirmation email
+const resendConfirmationEmail = async (req, res, next) => {
+  let email = null;
+  // Check if email is missing
+  if (!req.params.email || req.params.email === "") {
+    return next(new BadRequestError("Please provide email."));
+  }
+
+  try {
+    email = req.params.email;
+    // Find user with matching email and include password field in the result
+    const user = await User.findOne({ email });
+    console.log(user);
+
+    if (user === null) {
+      return next(
+        new CustomAPIError(
+          "No user found with provided email. Please register a new account.",
+          StatusCodes.NOT_FOUND,
+          "failed"
+        )
+      );
+    }
+
+    // Check if user already confirmed the email
+
+    if (user.accountEmailConfirmed) {
+      return next(
+        new CustomAPIError(
+          `Email already confirmed for account with email ${user.email}.`,
+          StatusCodes.BAD_REQUEST,
+          "failed"
+        )
+      );
+    }
+
+    // Send welcome email to the user with the email confirmation token
+    const confirmationToken = user.createConfirmationToken();
+    //  Send the plain text token to the user
+    const accountConfirmationUrl = `${req.protocol}://localhost:3000/confirmRegistrationEmail/${confirmationToken}`;
+
+    await new EmailHandler(user).sendNewAccountConfirmationEmail(
+      user,
+      accountConfirmationUrl
+    );
+
+    // We need to save it so we save the confirmation token to the user
+    await user.save({ validateBeforeSave: false });
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: `A confirmation email has been sent to ${email}. Please confirm your email to complete the registration.`,
+    });
+  } catch (error) {
+    console.error(error);
+    return next(
+      new CustomAPIError("Error.", StatusCodes.INTERNAL_SERVER_ERROR, "failed")
+    );
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -300,4 +362,5 @@ module.exports = {
   resetPassword,
   updatePassword,
   confirmRegistrationEmail,
+  resendConfirmationEmail,
 };

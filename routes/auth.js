@@ -30,4 +30,9 @@ router.post(
   authController.confirmRegistrationEmail
 );
 
+router.post(
+  "/resendConfirmationEmail/:email",
+  authController.resendConfirmationEmail
+);
+
 module.exports = router; // ? Export the router object for use in other modules
