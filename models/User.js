@@ -201,7 +201,7 @@ userSchema.methods.createConfirmationToken = function () {
   const { resetToken, hashedToken } = generateRandomToken();
   //  First delete the existing token from the database
   this.emailConfirmationToken = undefined;
-  //  Save the hashed token to the database for the current user
+  //  Now save the hashed token to the database for the current user
   this.emailConfirmationToken = hashedToken;
   //  Confirmation token valid for 10 minutes
   this.emailConfirmationTokenExpiration = Date.now() + 10 * 60 * 1000;

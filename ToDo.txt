@@ -6,7 +6,7 @@
 
 6. Check if unique review per user is working
 
-7. Use the createResponseWithJWT and createResponseHTTPresponse troughout
+7. Use the createResponseWithJWT and createResponse HTTPresponse 
 
 8. Add users to be able to see all their reviews 
 
